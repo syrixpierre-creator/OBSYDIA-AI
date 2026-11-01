@@ -209,9 +209,8 @@ Prices come from the plan settings, so no Stripe products need to be created in 
 
 ## PayPal
 
-1. Create a REST app and set `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` and `PAYPAL_MODE` (`sandbox`/`live`).
-2. Create a product and two monthly billing plans ($1.99 and $5.00). Set `PAYPAL_PLAN_ID_PRO` and `PAYPAL_PLAN_ID_PREMIUM`.
-3. Add a webhook at `https://YOUR_DOMAIN/api/webhooks/paypal` for `BILLING.SUBSCRIPTION.*`, `PAYMENT.SALE.COMPLETED` and `PAYMENT.SALE.REFUNDED`, then set `PAYPAL_WEBHOOK_ID`.
+1. Create a REST app (developer.paypal.com → Apps & Credentials) and set `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET` and `PAYPAL_MODE` (`sandbox`/`live`) in `.env`. `APP_URL` must be HTTPS.
+2. Run `sudo ./scripts/paypal-setup.sh`. It creates the product, the Pro and Premium monthly plans (prices from `PRO_PRICE_USD`/`PREMIUM_PRICE_USD`) and the webhook, writes `PAYPAL_PLAN_ID_PRO`, `PAYPAL_PLAN_ID_PREMIUM` and `PAYPAL_WEBHOOK_ID` into `.env`, and restarts the app. It is safe to re-run: existing IDs are kept.
 
 Webhooks are verified through PayPal's `verify-webhook-signature` API. Promo discounts apply to the first billing cycle through a plan override.
 
