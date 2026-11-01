@@ -32,7 +32,9 @@ export async function resolveModel(requested?: string) {
 
 export async function runCompletion(input: CompletionInput): Promise<CompletionOutput> {
   const { model, settings } = await resolveModel(input.model);
-  const promptEstimate = estimateMessagesTokens(input.messages);
+  const exempt = estimateTokens(`${settings.systemPrompt}\n${settings.personality}`);
+  const rawPromptEstimate = estimateMessagesTokens(input.messages);
+  const promptEstimate = Math.max(1, rawPromptEstimate - exempt);
   const desired = input.maxOutputTokens ?? settings.maxOutputTokens;
   const reservation = await reserveTokens(input.userId, promptEstimate, desired);
   let streamed = "";
@@ -53,7 +55,10 @@ export async function runCompletion(input: CompletionInput): Promise<CompletionO
     });
     const estimated = !result.usage;
     const usage = result.usage
-      ? { ...result.usage, estimated: false }
+      ? (() => {
+          const promptTokens = Math.max(0, result.usage!.promptTokens - exempt);
+          return { promptTokens, completionTokens: result.usage!.completionTokens, totalTokens: promptTokens + result.usage!.completionTokens, estimated: false };
+        })()
       : (() => {
           const completionTokens = estimateTokens(result.content);
           return { promptTokens: promptEstimate, completionTokens, totalTokens: promptEstimate + completionTokens, estimated: true };

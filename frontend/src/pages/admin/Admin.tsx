@@ -190,8 +190,8 @@ function AiConfig() {
         welcomeMessageFr: form.welcomeMessageFr,
         welcomeSubtitle: { en: form.subEn, fr: form.subFr },
         suggestions: {
-          en: form.sugEn.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 8),
-          fr: form.sugFr.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 8)
+          en: form.sugEn.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 12),
+          fr: form.sugFr.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 12)
         },
         defaultLanguage: form.defaultLanguage,
         model: form.model,
@@ -230,10 +230,10 @@ function AiConfig() {
           <label className="field"><span>Suggestions — English</span><textarea className="textarea" style={{ minHeight: 130 }} value={form.sugEn} onChange={(e) => setForm({ ...form, sugEn: e.target.value })} /></label>
           <label className="field"><span>Suggestions — Français</span><textarea className="textarea" style={{ minHeight: 130 }} value={form.sugFr} onChange={(e) => setForm({ ...form, sugFr: e.target.value })} /></label>
         </div>
-        <small className="dim">One suggestion per line, up to 8. Start a line with <span className="mono">build:</span> to open it in project-builder mode. Leave the subtitle empty to hide it.</small>
+        <small className="dim">One suggestion per line, up to 12. Start a line with <span className="mono">build:</span> to open it in project-builder mode. Leave the subtitle empty to hide it.</small>
       </div>
-      <label className="field"><span>Personality</span><textarea className="textarea" value={form.personality} onChange={(e) => setForm({ ...form, personality: e.target.value })} /></label>
-      <label className="field"><span>System prompt</span><textarea className="textarea mono" style={{ minHeight: 180, fontSize: 13 }} value={form.systemPrompt} onChange={(e) => setForm({ ...form, systemPrompt: e.target.value })} /><small>Creator identity rules are always appended automatically.</small></label>
+      <label className="field"><span>Personality</span><textarea className="textarea" style={{ minHeight: 120 }} value={form.personality} onChange={(e) => setForm({ ...form, personality: e.target.value })} /></label>
+      <label className="field"><span>System prompt</span><textarea className="textarea mono" style={{ minHeight: 320, fontSize: 13, whiteSpace: "pre-wrap" }} spellCheck={false} value={form.systemPrompt} onChange={(e) => setForm({ ...form, systemPrompt: e.target.value })} /><small>{form.systemPrompt.length.toLocaleString()} characters · ≈ {Math.ceil(form.systemPrompt.length / 3.6).toLocaleString()} tokens sent with every message — not deducted from users’ balances (up to 500,000 characters). Creator identity rules are always appended automatically.</small></label>
       <div className="grid cols-2">
         <label className="field"><span>Provider</span><input className="input" value={form.provider} disabled /></label>
         <label className="field"><span>Default model</span><input className="input mono" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} /></label>

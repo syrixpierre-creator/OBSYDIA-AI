@@ -504,6 +504,28 @@ d("admin", () => {
   });
 });
 
+d("admin AI prompt", () => {
+  it("accepts very long prompts with any characters and sends them intact", async () => {
+    const a = await admin();
+    const chunk = "Règle n°1 — réponds en français 🇫🇷✨ ; 中文测试 ; العربية ; \"quotes\" 'single' `code` $dollar {braces} <tag> & | \\ backslash \n## Markdown **bold** _it_\n```js\nconst x = a?.b ?? `t${1}`;\n```\n\t• bullet ½ ∑ π ≠ ≤ 😀👍🏽\n";
+    const prompt = chunk.repeat(Math.ceil(300_000 / chunk.length)).slice(0, 300_000);
+    const r = await a.put("/api/admin/ai-settings", { systemPrompt: prompt, personality: chunk.repeat(100) });
+    expect(r.status).toBe(200);
+    const back = (await a.get("/api/admin/ai-settings")).body.effective.systemPrompt;
+    expect(back).toBe(prompt.trim());
+    const tooLong = await a.put("/api/admin/ai-settings", { systemPrompt: "x".repeat(500_001) });
+    expect(tooLong.status).toBe(400);
+    expect(tooLong.body.error.details[0].path).toBe("systemPrompt");
+    settings.clearSettingsCache();
+    const { client } = await signup(app, "longprompt@example.com");
+    const conv = (await client.post("/api/chat/conversations", {})).body.conversation;
+    await send(client, conv.id, "hello");
+    expect(mock.requests.at(-1)!.body.messages[0].content.startsWith(prompt.trim())).toBe(true);
+    const bal = (await client.get("/api/tokens")).body.balance;
+    expect(bal.used).toBeLessThan(2000);
+  });
+});
+
 d("stripe webhooks", () => {
   it("verifies signatures, activates only on verified payment, and is idempotent", async () => {
     const { client, user } = await signup(app, "pay@example.com");

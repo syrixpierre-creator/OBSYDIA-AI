@@ -45,6 +45,10 @@ export function I18nProvider({ children }: { children: ReactNode }) {
   const errorText = useCallback(
     (err: unknown) => {
       if (err instanceof ApiError) {
+        if (err.code === "validation_error" && Array.isArray(err.details) && err.details.length) {
+          const fields = err.details.slice(0, 3).map((d: any) => `${d.path || "field"}: ${d.message}`).join(" · ");
+          return `${t("err.validation_error")} ${fields}`;
+        }
         const key = `err.${err.code}` as TKey;
         if (key in en) return t(key);
         return err.message || t("err.generic");

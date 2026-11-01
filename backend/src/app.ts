@@ -141,7 +141,9 @@ export function createApp() {
   app.use("/api/v1", apiV1Router);
   app.use("/preview", previewRouter);
   app.use(cookieParser());
-  app.use(express.json({ limit: "2mb" }));
+  const jsonSmall = express.json({ limit: "2mb" });
+  const jsonLarge = express.json({ limit: "12mb" });
+  app.use((req, res, next) => (req.path.startsWith("/api/admin") ? jsonLarge : jsonSmall)(req, res, next));
   app.use(mongoSanitize);
   app.use("/api", loadUser, csrfProtection);
   app.use("/api/public", publicRouter);
