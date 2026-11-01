@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { env, isProd } from "../config/env.js";
+import { env } from "../config/env.js";
 import { Session, User } from "../models/index.js";
 import { randomToken, safeEqual, sha256 } from "../lib/crypto.js";
 import { forbidden, unauthorized } from "../lib/errors.js";
@@ -19,8 +19,12 @@ declare global {
   }
 }
 
+export function secureCookies() {
+  return env().APP_URL.startsWith("https://");
+}
+
 function cookieBase() {
-  return { httpOnly: true, secure: isProd(), sameSite: "lax" as const, path: "/" };
+  return { httpOnly: true, secure: secureCookies(), sameSite: "lax" as const, path: "/" };
 }
 
 export async function createSession(req: Request, res: Response, user: any) {
@@ -45,7 +49,7 @@ export async function createSession(req: Request, res: Response, user: any) {
 
 export function issueCsrf(res: Response) {
   const token = randomToken(24);
-  res.cookie(CSRF_COOKIE, token, { httpOnly: false, secure: isProd(), sameSite: "lax", path: "/" });
+  res.cookie(CSRF_COOKIE, token, { httpOnly: false, secure: secureCookies(), sameSite: "lax", path: "/" });
   return token;
 }
 

@@ -229,7 +229,7 @@ authRouter.get("/google", (req, res) => {
   if (!e.GOOGLE_CLIENT_ID || !e.GOOGLE_CLIENT_SECRET) return res.redirect("/login?error=google_not_configured");
   const nonce = randomToken(16);
   const state = signPayload({ n: nonce, ref: String(req.query.ref || "").slice(0, 32) }, 600, "oauth");
-  res.cookie("obs_oauth", nonce, { httpOnly: true, sameSite: "lax", secure: e.NODE_ENV === "production", maxAge: 600_000, path: "/api/auth" });
+  res.cookie("obs_oauth", nonce, { httpOnly: true, sameSite: "lax", secure: e.APP_URL.startsWith("https://"), maxAge: 600_000, path: "/api/auth" });
   const params = new URLSearchParams({
     client_id: e.GOOGLE_CLIENT_ID,
     redirect_uri: `${e.APP_URL}/api/auth/google/callback`,
