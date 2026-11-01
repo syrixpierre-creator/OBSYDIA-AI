@@ -6,7 +6,7 @@ import { Modal, Confirm } from "../../components/Modal";
 import { useToast } from "../../components/Toast";
 import { Bars } from "../../components/Bars";
 
-type Tab = "overview" | "users" | "ai" | "keys" | "plans" | "promos" | "payments" | "subscriptions" | "teams" | "referrals" | "audit";
+type Tab = "overview" | "users" | "ai" | "keys" | "ads" | "plans" | "promos" | "payments" | "subscriptions" | "teams" | "referrals" | "audit";
 
 function useLoad<T>(url: string, deps: unknown[] = []) {
   const { errorText } = useI18n();
@@ -341,6 +341,101 @@ function Keys() {
   );
 }
 
+function extractSrc(text: string) {
+  const m = text.match(/src=["']([^"']+)["']/i);
+  return (m ? m[1]! : text).trim();
+}
+
+function extractContainer(text: string) {
+  return text.match(/id=["'](container-[^"']+)["']/i)?.[1] ?? "";
+}
+
+function AdsAdmin() {
+  const { t, errorText } = useI18n();
+  const toast = useToast();
+  const { data, reload } = useLoad<any>("/api/admin/ads");
+  const [f, setF] = useState<any>(null);
+  const [nativeCode, setNativeCode] = useState("");
+  const [socialCode, setSocialCode] = useState("");
+  useEffect(() => {
+    if (data) setF({ ...data.effective });
+  }, [data]);
+  if (!f) return <div className="skeleton" style={{ height: 300 }} />;
+  const applyNative = (code: string) => {
+    setNativeCode(code);
+    const src = extractSrc(code);
+    const container = extractContainer(code);
+    setF((x: any) => ({ ...x, nativeSrc: src.startsWith("https://") ? src : x.nativeSrc, nativeContainer: container || x.nativeContainer }));
+  };
+  const applySocial = (code: string) => {
+    setSocialCode(code);
+    const src = extractSrc(code);
+    if (src.startsWith("https://")) setF((x: any) => ({ ...x, socialSrc: src }));
+  };
+  const save = async () => {
+    try {
+      await api.put("/api/admin/ads", {
+        enabled: f.enabled,
+        nativeSrc: f.nativeSrc || "",
+        nativeContainer: f.nativeContainer || "",
+        socialSrc: f.socialSrc || "",
+        smartlink: f.smartlink || "",
+        socialDelaySeconds: Number(f.socialDelaySeconds) || 0,
+        adFreePlans: f.adFreePlans
+      });
+      toast(t("common.saved"));
+      setNativeCode("");
+      setSocialCode("");
+      await reload();
+    } catch (e) {
+      toast(errorText(e), "error");
+    }
+  };
+  return (
+    <div className="stack" style={{ gap: 16, maxWidth: 860 }}>
+      <label className="check" style={{ fontSize: 15 }}>
+        <input type="checkbox" checked={f.enabled} onChange={(e) => setF({ ...f, enabled: e.target.checked })} /> Ads enabled
+      </label>
+      <div className="card card-pad stack">
+        <span className="label">Native banner — landing page only</span>
+        <textarea className="textarea mono" style={{ fontSize: 12.5, minHeight: 80 }} placeholder="Paste the full Native Banner code here to fill the fields automatically" value={nativeCode} onChange={(e) => applyNative(e.target.value)} />
+        <div className="grid cols-2">
+          <label className="field"><span>Script URL</span><input className="input mono" value={f.nativeSrc} onChange={(e) => setF({ ...f, nativeSrc: e.target.value })} /></label>
+          <label className="field"><span>Container ID</span><input className="input mono" value={f.nativeContainer} onChange={(e) => setF({ ...f, nativeContainer: e.target.value })} /></label>
+        </div>
+      </div>
+      <div className="card card-pad stack">
+        <span className="label">Social bar — whole site (except sensitive pages)</span>
+        <textarea className="textarea mono" style={{ fontSize: 12.5, minHeight: 64 }} placeholder="Paste the full Social Bar code here" value={socialCode} onChange={(e) => applySocial(e.target.value)} />
+        <div className="grid cols-2">
+          <label className="field"><span>Script URL</span><input className="input mono" value={f.socialSrc} onChange={(e) => setF({ ...f, socialSrc: e.target.value })} /></label>
+          <label className="field"><span>Delay before showing (seconds)</span><input className="input" type="number" min={0} max={600} value={f.socialDelaySeconds} onChange={(e) => setF({ ...f, socialDelaySeconds: e.target.value })} /></label>
+        </div>
+        <small className="dim">Never shown on login, signup, payment, pricing, settings, API keys or admin pages, nor over the chat composer on mobile.</small>
+      </div>
+      <div className="card card-pad stack">
+        <span className="label">Smartlink — landing page only</span>
+        <input className="input mono" value={f.smartlink} onChange={(e) => setF({ ...f, smartlink: e.target.value })} placeholder="https://…" />
+      </div>
+      <div className="card card-pad stack">
+        <span className="label">Ad-free plans</span>
+        <div className="row" style={{ gap: 18, flexWrap: "wrap" }}>
+          {["free", "pro", "premium", "custom"].map((p) => (
+            <label key={p} className="check">
+              <input type="checkbox" checked={f.adFreePlans.includes(p)} onChange={(e) => setF({ ...f, adFreePlans: e.target.checked ? [...f.adFreePlans, p] : f.adFreePlans.filter((x: string) => x !== p) })} /> {t(`plan.${p}` as TKey)}
+            </label>
+          ))}
+        </div>
+        <small className="dim">Administrators never see ads.</small>
+      </div>
+      <div className="row">
+        <button className="btn primary" onClick={save}>{t("common.save")}</button>
+        <button className="btn ghost" onClick={() => setF({ ...data.defaults })}>Reset to .env</button>
+      </div>
+    </div>
+  );
+}
+
 function Plans() {
   const { t, errorText } = useI18n();
   const toast = useToast();
@@ -489,8 +584,8 @@ function ReferralsAdmin() {
 export function Admin() {
   const { t, locale } = useI18n();
   const [tab, setTab] = useState<Tab>("overview");
-  const tabs: Tab[] = ["overview", "users", "ai", "keys", "plans", "promos", "payments", "subscriptions", "teams", "referrals", "audit"];
-  const label: Record<Tab, TKey> = { overview: "admin.overview", users: "admin.users", ai: "admin.ai", keys: "admin.keys", plans: "admin.plans", promos: "admin.promos", payments: "admin.payments", subscriptions: "admin.subscriptions", teams: "admin.teams", referrals: "admin.referrals", audit: "admin.audit" };
+  const tabs: Tab[] = ["overview", "users", "ai", "keys", "ads", "plans", "promos", "payments", "subscriptions", "teams", "referrals", "audit"];
+  const label: Record<Tab, TKey> = { overview: "admin.overview", users: "admin.users", ai: "admin.ai", keys: "admin.keys", ads: "admin.ads", plans: "admin.plans", promos: "admin.promos", payments: "admin.payments", subscriptions: "admin.subscriptions", teams: "admin.teams", referrals: "admin.referrals", audit: "admin.audit" };
   return (
     <div className="content">
       <div className="page" style={{ maxWidth: 1240 }}>
@@ -502,6 +597,7 @@ export function Admin() {
         {tab === "users" && <Users />}
         {tab === "ai" && <AiConfig />}
         {tab === "keys" && <Keys />}
+        {tab === "ads" && <AdsAdmin />}
         {tab === "plans" && <Plans />}
         {tab === "promos" && <Promos />}
         {tab === "payments" && <SimpleTable url="/api/admin/payments" cols={["Date", "User", "Provider", "Plan", "Amount", "Status"]} pick={(d) => d.payments.map((p: any) => [formatDate(p.createdAt, locale), p.user, p.provider, p.plan || "—", money(p.amountCents, locale), <span className={`badge ${p.status === "succeeded" ? "success" : p.status === "failed" ? "error" : ""}`}>{p.status}</span>])} />}

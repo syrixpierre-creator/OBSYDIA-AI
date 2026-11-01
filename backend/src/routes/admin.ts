@@ -14,6 +14,7 @@ import { envAiSettings, getAiOverrides, getAiSettings, getPlanOverrides, getPlan
 import { applyPlanToBalance, getBalanceView, grantBonus } from "../services/tokens.js";
 import { publicUser } from "../services/users.js";
 import { Session } from "../models/index.js";
+import { envAds, getAds, invalidateAds } from "../services/ads.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAdmin);
@@ -171,6 +172,31 @@ adminRouter.put("/ai-settings", async (req, res) => {
   await writeSetting("ai", input, req.user._id);
   await audit(req, "admin.ai_settings_updated", { meta: { fields: Object.keys(input) } });
   res.json({ effective: await getAiSettings(), overrides: input });
+});
+
+const httpsUrl = z.string().trim().max(500).refine((v) => v === "" || /^https:\/\/[^\s"'<>]+$/.test(v), "must be an https:// URL");
+
+adminRouter.get("/ads", async (_req, res) => {
+  res.json({ effective: await getAds(true), defaults: envAds() });
+});
+
+adminRouter.put("/ads", async (req, res) => {
+  const input = body(
+    req,
+    z.object({
+      enabled: z.boolean(),
+      nativeSrc: httpsUrl,
+      nativeContainer: z.string().trim().max(120).regex(/^[A-Za-z0-9_-]*$/),
+      socialSrc: httpsUrl,
+      smartlink: httpsUrl,
+      socialDelaySeconds: z.number().int().min(0).max(600),
+      adFreePlans: z.array(z.enum(["free", "pro", "premium", "custom"])).max(4)
+    })
+  );
+  await writeSetting("ads", input, req.user._id);
+  invalidateAds();
+  await audit(req, "admin.ads_updated", { meta: { enabled: input.enabled, adFreePlans: input.adFreePlans } });
+  res.json({ effective: await getAds(true) });
 });
 
 adminRouter.get("/plans", async (_req, res) => {

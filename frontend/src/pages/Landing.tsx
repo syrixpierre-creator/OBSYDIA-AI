@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { MessagesSquare, Code2, Boxes, FileArchive, MonitorPlay, Mic, Webhook, Users, ArrowRight, Mail } from "lucide-react";
 import { SitePage } from "../components/Site";
 import { Intro, shouldPlay, useReveal } from "../components/Intro";
+import { SponsoredBlock } from "../components/Ads";
 import { useState } from "react";
 import { useI18n, type TKey } from "../lib/i18n";
 import { useSession } from "../lib/session";
@@ -112,6 +113,8 @@ export function Landing() {
           </div>
         </div>
       </section>
+
+      <SponsoredBlock />
 
       <section className="section">
         <div className="container">

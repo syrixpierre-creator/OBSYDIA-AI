@@ -467,3 +467,14 @@ html.intro-lock body { overflow: hidden; }
   .set-row-control, .set-row-control .input, .set-row-control .select { width: 100% !important; }
   .set-row-control .row { width: 100%; }
 }
+.sponsor-section { padding: 48px 0; }
+.sponsor { border: 1px solid var(--border); border-radius: var(--radius-lg); background: var(--surface); padding: 16px 18px 18px; }
+.sponsor-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.sponsor-remove { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--text-secondary); }
+.sponsor-remove:hover { color: var(--text-primary); }
+.native-ad { min-height: 120px; color: var(--text-primary); font-family: inherit; }
+.native-ad a { color: inherit; }
+.sponsor-link { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 12px; padding: 14px 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--background); transition: border-color .2s; flex-wrap: wrap; }
+.sponsor-link:hover { border-color: var(--border-strong); }
+.sponsor-link-title { font-weight: 600; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+.sponsor-link-desc { color: var(--text-tertiary); font-size: 13px; margin-top: 2px; }

@@ -25,6 +25,7 @@ import { apiV1Router } from "./routes/apiV1.js";
 import { referralsRouter, teamsRouter } from "./routes/growth.js";
 import { adminRouter } from "./routes/admin.js";
 import { publicRouter } from "./routes/public.js";
+import { adsActiveSync, getAds } from "./services/ads.js";
 
 const startedAt = Date.now();
 
@@ -105,19 +106,23 @@ export function createApp() {
   });
 
   const previewOrigin = process.env.PREVIEW_URL ? new URL(process.env.PREVIEW_URL).origin : null;
+  const adsSrc = (strict: string) => () => (adsActiveSync() ? "https: 'unsafe-inline'" : strict);
+  void getAds().catch(() => undefined);
+  const adsRefresh = setInterval(() => void getAds(true).catch(() => undefined), 30_000);
+  adsRefresh.unref();
   app.use(
     helmet({
       contentSecurityPolicy: {
         useDefaults: false,
         directives: {
           defaultSrc: ["'self'"],
-          scriptSrc: ["'self'"],
-          styleSrc: ["'self'", "'unsafe-inline'"],
-          imgSrc: ["'self'", "data:", "blob:"],
-          fontSrc: ["'self'", "data:"],
-          connectSrc: ["'self'"],
+          scriptSrc: ["'self'", adsSrc("")],
+          styleSrc: ["'self'", "'unsafe-inline'", () => (adsActiveSync() ? "https:" : "")],
+          imgSrc: ["'self'", "data:", "blob:", () => (adsActiveSync() ? "https:" : "")],
+          fontSrc: ["'self'", "data:", () => (adsActiveSync() ? "https:" : "")],
+          connectSrc: ["'self'", () => (adsActiveSync() ? "https: wss:" : "")],
           mediaSrc: ["'self'", "blob:"],
-          frameSrc: ["'self'", ...(previewOrigin ? [previewOrigin] : [])],
+          frameSrc: ["'self'", ...(previewOrigin ? [previewOrigin] : []), () => (adsActiveSync() ? "https:" : "")],
           workerSrc: ["'self'", "blob:"],
           objectSrc: ["'none'"],
           baseUri: ["'self'"],

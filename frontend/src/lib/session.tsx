@@ -46,6 +46,15 @@ export interface PublicConfig {
   referral: { required: number; rewardTokens: number };
   plans: PlanInfo[];
   limits: { maxUploadMb: number };
+  ads?: {
+    enabled: boolean;
+    nativeSrc: string | null;
+    nativeContainer: string | null;
+    socialSrc: string | null;
+    smartlink: string | null;
+    socialDelaySeconds: number;
+    adFreePlans: string[];
+  };
 }
 
 export interface Balance {

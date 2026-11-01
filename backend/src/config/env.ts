@@ -130,6 +130,14 @@ const schema = z.object({
   ARTIFACT_LINK_TTL_MINUTES: int(15),
   PREVIEW_LINK_TTL_MINUTES: int(60),
 
+  ADS_ENABLED: z.string().optional().transform((v) => v === undefined || v === "" ? true : v === "true" || v === "1" || v === "yes"),
+  ADS_NATIVE_SRC: z.string().optional().default("https://bauval.org/21/1878ebe128fe0761e5ff5020fec7ca27"),
+  ADS_NATIVE_CONTAINER: z.string().optional().default("container-1878ebe128fe0761e5ff5020fec7ca27"),
+  ADS_SOCIAL_SRC: z.string().optional().default("https://bauval.org/14/6320fb17b3cd656cecaddc32d0d5f525"),
+  ADS_SMARTLINK: z.string().optional().default("https://araplhn.org/4/ad3d00b332f1ab51b420a41cea657ee5"),
+  ADS_SOCIAL_DELAY_SECONDS: int(20),
+  ADS_FREE_PLANS: z.string().optional().default("premium,custom"),
+
   ADMIN_EMAIL: z.string().optional().default(""),
   ADMIN_PASSWORD: z.string().optional().default("")
 });

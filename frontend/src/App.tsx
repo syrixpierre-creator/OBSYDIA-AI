@@ -8,6 +8,7 @@ import { PricingPublic } from "./pages/Pricing";
 import { AppShell } from "./components/AppShell";
 import { ChatPage } from "./pages/app/Chat";
 import { InviteAccept } from "./pages/Invite";
+import { SocialBar } from "./components/Ads";
 
 const Docs = lazy(() => import("./pages/Docs").then((m) => ({ default: m.Docs })));
 const Projects = lazy(() => import("./pages/app/Projects").then((m) => ({ default: m.Projects })));
@@ -43,6 +44,7 @@ export function App() {
   if (!ready) return <Spinner />;
   return (
     <Suspense fallback={<Spinner />}>
+      <SocialBar />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/pricing" element={<PricingPublic />} />

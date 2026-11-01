@@ -10,7 +10,7 @@ import { useSession, type PlanInfo } from "../lib/session";
 function features(p: PlanInfo, t: (k: TKey, v?: any) => string): string[] {
   if (p.id === "free") return [t("pricing.feat.standard"), t("pricing.feat.history"), t("pricing.feat.images"), t("pricing.feat.basicProjects"), t("pricing.feat.zipDownloads"), t("pricing.feat.preview"), t("pricing.feat.copy"), t("pricing.feat.basicUploads")];
   if (p.id === "pro") return [t("pricing.feat.priority"), t("pricing.feat.api"), t("pricing.feat.advancedProjects"), t("pricing.feat.zipDownloads"), t("pricing.feat.preview"), t("pricing.feat.images"), t("pricing.feat.zipUploads"), t("pricing.feat.voice"), t("pricing.feat.pinned")];
-  if (p.id === "premium") return [t("pricing.feat.priority"), t("pricing.feat.api"), t("pricing.feat.advancedProjects"), t("pricing.feat.zipDownloads"), t("pricing.feat.preview"), t("pricing.feat.advancedUploads"), t("pricing.feat.voice"), t("pricing.feat.promo"), t("pricing.feat.team"), t("pricing.feat.invite", { n: p.maxTeamInvites })];
+  if (p.id === "premium") return [t("pricing.feat.priority"), t("pricing.feat.api"), t("pricing.feat.advancedProjects"), t("pricing.feat.zipDownloads"), t("pricing.feat.preview"), t("pricing.feat.advancedUploads"), t("pricing.feat.voice"), t("pricing.feat.noAds"), t("pricing.feat.promo"), t("pricing.feat.team"), t("pricing.feat.invite", { n: p.maxTeamInvites })];
   return [t("pricing.feat.custom1"), t("pricing.feat.custom2"), t("pricing.feat.custom3"), t("pricing.feat.team")];
 }
 

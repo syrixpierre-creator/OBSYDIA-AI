@@ -5,6 +5,7 @@ import { stripeConfigured } from "../services/billing/stripe.js";
 import { paypalConfigured } from "../services/billing/paypal.js";
 import { transcriptionAvailable } from "../services/transcription.js";
 import { mailConfigured } from "../lib/mailer.js";
+import { getAds } from "../services/ads.js";
 
 export const publicRouter = Router();
 
@@ -12,6 +13,7 @@ publicRouter.get("/config", async (_req, res) => {
   const e = env();
   const ai = await getAiSettings();
   const plans = await getPlans();
+  const ads = await getAds();
   res.setHeader("Cache-Control", "public, max-age=30");
   res.json({
     app: { name: e.APP_NAME, creator: e.APP_CREATOR, email: e.APP_EMAIL, url: e.APP_URL },
@@ -42,6 +44,15 @@ publicRouter.get("/config", async (_req, res) => {
       apiRequestsPerMinute: p.apiRequestsPerMinute,
       maxUploadMb: p.maxUploadMb
     })),
-    limits: { maxUploadMb: e.MAX_UPLOAD_MB }
+    limits: { maxUploadMb: e.MAX_UPLOAD_MB },
+    ads: {
+      enabled: ads.enabled,
+      nativeSrc: ads.nativeSrc || null,
+      nativeContainer: ads.nativeContainer || null,
+      socialSrc: ads.socialSrc || null,
+      smartlink: ads.smartlink || null,
+      socialDelaySeconds: ads.socialDelaySeconds,
+      adFreePlans: ads.adFreePlans
+    }
   });
 });
