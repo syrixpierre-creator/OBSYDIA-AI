@@ -23,7 +23,7 @@ export function SiteNav() {
         <div className="site-nav-right">
           <span className="hide-sm"><LanguageSwitch /></span>
           {user ? (
-            <Link to="/app" className="btn primary sm">{t("nav.openApp")}</Link>
+            <Link to="/app" className="nav-avatar" aria-label={user.name} title={user.name}>{user.name.slice(0, 1).toUpperCase()}</Link>
           ) : (
             <>
               <Link to="/login" className="btn ghost sm hide-sm">{t("nav.login")}</Link>

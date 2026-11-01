@@ -13,7 +13,7 @@ function initialLocale(): Locale {
     const saved = localStorage.getItem("obs_locale");
     if (saved === "en" || saved === "fr") return saved;
   } catch {}
-  return navigator.language?.toLowerCase().startsWith("fr") ? "fr" : "en";
+  return "en";
 }
 
 interface Ctx {

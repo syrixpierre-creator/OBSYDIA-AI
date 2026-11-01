@@ -14,7 +14,7 @@ OBSYDIA AI is a full-stack AI workspace: streaming conversations, an AI coding a
 |---|---|
 | ![Landing](docs/screenshots/01-landing-hero.png) | ![Chat](docs/screenshots/06-chat-answer.png) |
 | ![Project generated from chat](docs/screenshots/07-chat-project-generated.png) | ![Workspace with live preview](docs/screenshots/08-project-workspace.png) |
-| ![Pricing](docs/screenshots/03-pricing.png) | ![API dashboard](docs/screenshots/13-api-dashboard.png) |
+| ![Pricing](docs/screenshots/00-intro-animation.png) | ![API dashboard](docs/screenshots/13-api-dashboard.png) |
 | ![Admin – provider keys](docs/screenshots/17-admin-provider-keys.png) | ![API documentation](docs/screenshots/19-api-docs.png) |
 
 <p align="center">

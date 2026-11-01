@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import { MessagesSquare, Code2, Boxes, FileArchive, MonitorPlay, Mic, Webhook, Users, ArrowRight, Mail } from "lucide-react";
 import { SitePage } from "../components/Site";
-import { PlanGrid } from "./Pricing";
+import { Intro, shouldPlay, useReveal } from "../components/Intro";
+import { useState } from "react";
 import { useI18n, type TKey } from "../lib/i18n";
 import { useSession } from "../lib/session";
 import { formatNumber } from "../lib/api";
@@ -21,29 +22,47 @@ export function Landing() {
   const { t, locale } = useI18n();
   const { config, user } = useSession();
   const host = typeof window !== "undefined" ? window.location.origin : "";
+  const [base] = useState(() => (shouldPlay() ? 2.05 : 0.1));
+  useReveal([locale]);
+  const d = (s: number) => ({ animationDelay: `${base + s}s` });
+  const words = t("landing.hero").split(" ");
+  const half = Math.ceil(words.length / 2);
+  const lines = [words.slice(0, half).join(" "), words.slice(half).join(" ")].filter(Boolean);
+  const ticker = [t("landing.f.chat.t"), t("landing.f.code.t"), t("landing.f.project.t"), t("landing.f.zip.t"), t("landing.f.preview.t"), t("landing.f.input.t"), t("landing.f.api.t"), t("landing.f.team.t")];
   return (
     <SitePage>
+      <Intro />
       <section className="hero">
         <div className="hero-lines" />
+        <div className="hero-glow" />
         <div className="container hero-grid">
           <div>
-            <span className="eyebrow">{t("landing.eyebrow")}</span>
-            <h1>{t("landing.hero")}</h1>
-            <p className="lead">{t("landing.sub")}</p>
-            <div className="hero-cta">
+            <span className="eyebrow hero-anim" style={d(0)}>{t("landing.eyebrow")}</span>
+            <h1 className="hero-title" key={locale}>
+              {lines.map((l, i) => (
+                <span className="ln" key={i}><span style={d(0.1 + i * 0.12)}>{l}</span></span>
+              ))}
+            </h1>
+            <p className="lead hero-anim" style={d(0.45)}>{t("landing.sub")}</p>
+            <div className="hero-cta hero-anim" style={d(0.6)}>
               <Link to={user ? "/app" : "/register"} className="btn primary lg">
                 {t("landing.ctaStart")} <ArrowRight size={16} />
               </Link>
               <a href="#features" className="btn lg">{t("landing.ctaFeatures")}</a>
-              <Link to="/pricing" className="btn ghost lg">{t("landing.ctaPricing")}</Link>
             </div>
           </div>
-          <div className="hero-art">
+          <div className="hero-art" style={d(0.2)}>
+            <span className="sweep" />
             <img src="/obsydia-hero.jpg" alt="OBSYDIA AI" />
             <span className="hero-tag">THINK · CREATE · BUILD · DEPLOY</span>
           </div>
         </div>
       </section>
+      <div className="marquee" aria-hidden>
+        <div className="marquee-track">
+          {[...ticker, ...ticker].map((x, i) => <span key={i}>{x}</span>)}
+        </div>
+      </div>
       <div className="stats-band container" style={{ padding: 0 }}>
         <div><b>01</b>{t("landing.stat1")}</div>
         <div><b>02</b>{t("landing.stat2")}</div>
@@ -52,7 +71,7 @@ export function Landing() {
       </div>
 
       <section className="section">
-        <div className="container split">
+        <div className="container split" data-reveal>
           <div>
             <span className="eyebrow">OBSYDIA AI</span>
             <h2 style={{ fontSize: "clamp(28px,3.6vw,42px)", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "12px 0 16px" }}>{t("landing.introTitle")}</h2>
@@ -75,7 +94,7 @@ export function Landing() {
 
       <section className="section" id="features">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <span className="eyebrow">{t("landing.featuresTitle")}</span>
               <h2>{t("landing.hero")}</h2>
@@ -84,7 +103,7 @@ export function Landing() {
           </div>
           <div className="features">
             {FEATURES.map((f) => (
-              <div className="feature" key={f.k}>
+              <div className="feature" key={f.k} data-reveal style={{ ["--d" as any]: `${(FEATURES.indexOf(f) % 4) * 0.08}s` }}>
                 <div className="ico"><f.icon size={18} /></div>
                 <h3>{t(`landing.f.${f.k}.t` as TKey)}</h3>
                 <p>{t(`landing.f.${f.k}.d` as TKey)}</p>
@@ -96,7 +115,7 @@ export function Landing() {
 
       <section className="section">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <span className="eyebrow">{t("landing.f.project.t")}</span>
               <h2>{t("landing.howTitle")}</h2>
@@ -105,7 +124,7 @@ export function Landing() {
           </div>
           <div className="steps">
             {[1, 2, 3, 4].map((n) => (
-              <div className="step" key={n}>
+              <div className="step" key={n} data-reveal style={{ ["--d" as any]: `${(n - 1) * 0.1}s` }}>
                 <span className="n">0{n}</span>
                 <h4>{t(`landing.how${n}.t` as TKey)}</h4>
                 <p>{t(`landing.how${n}.d` as TKey)}</p>
@@ -116,7 +135,7 @@ export function Landing() {
       </section>
 
       <section className="section">
-        <div className="container split">
+        <div className="container split" data-reveal>
           <div>
             <span className="eyebrow">{t("landing.f.api.t")}</span>
             <h2 style={{ fontSize: "clamp(28px,3.6vw,42px)", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "12px 0 16px" }}>{t("landing.apiTitle")}</h2>
@@ -140,21 +159,8 @@ export function Landing() {
         </div>
       </section>
 
-      <section className="section" id="pricing">
-        <div className="container">
-          <div className="section-head">
-            <div>
-              <span className="eyebrow">{t("nav.pricing")}</span>
-              <h2>{t("pricing.title")}</h2>
-            </div>
-            <p>{t("pricing.sub")}</p>
-          </div>
-          <PlanGrid />
-        </div>
-      </section>
-
       <section className="section">
-        <div className="container split">
+        <div className="container split" data-reveal>
           <div>
             <span className="eyebrow">{t("nav.referrals")}</span>
             <h2 style={{ fontSize: "clamp(28px,3.6vw,42px)", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "12px 0 16px" }}>{t("landing.referralTitle")}</h2>
@@ -178,7 +184,7 @@ export function Landing() {
 
       <section className="section" id="faq">
         <div className="container">
-          <div className="section-head">
+          <div className="section-head" data-reveal>
             <div>
               <span className="eyebrow">{t("nav.faq")}</span>
               <h2>{t("landing.faqTitle")}</h2>
@@ -186,7 +192,7 @@ export function Landing() {
           </div>
           <div className="faq">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <details key={n}>
+              <details key={n} data-reveal style={{ ["--d" as any]: `${(n - 1) * 0.05}s` }}>
                 <summary>{t(`landing.faq${n}.q` as TKey)}</summary>
                 <p>{t(`landing.faq${n}.a` as TKey)}</p>
               </details>
@@ -196,7 +202,7 @@ export function Landing() {
       </section>
 
       <section className="section" id="contact" style={{ borderBottom: 0 }}>
-        <div className="container split">
+        <div className="container split" data-reveal>
           <div>
             <span className="eyebrow">Contact</span>
             <h2 style={{ fontSize: "clamp(28px,3.6vw,42px)", letterSpacing: "-0.03em", lineHeight: 1.1, margin: "12px 0 16px" }}>{t("landing.contactTitle")}</h2>

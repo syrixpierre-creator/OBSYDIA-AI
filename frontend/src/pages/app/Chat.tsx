@@ -12,6 +12,7 @@ import { useToast } from "../../components/Toast";
 import { Markdown } from "../../components/Markdown";
 import { ProjectCard, type ProjectSummary } from "../../components/ProjectCard";
 import { Mark } from "../../components/Logo";
+import { UpgradeCard } from "../../components/UpgradeCard";
 
 interface Attachment {
   fileId: string;
@@ -172,14 +173,12 @@ function MessageView({
         )}
         {project && <ProjectCard initial={project} onUpdate={onProjectUpdate} />}
         {m.status === "stopped" && <div className="dim" style={{ fontSize: 12.5, marginTop: 6 }}>{t("chat.stopped")}</div>}
-        {m.status === "error" && (
+        {m.status === "error" && m.error === "insufficient_tokens" && <UpgradeCard />}
+        {m.status === "error" && m.error !== "insufficient_tokens" && (
           <div className="alert error msg-error">
             <AlertTriangle size={16} />
             <div className="grow">
               {m.errorMessage || t("err.generic")}
-              {m.error === "insufficient_tokens" && (
-                <> <Link className="link" to="/app/pricing" style={{ fontWeight: 600 }}>{t("nav.upgrade")}</Link></>
-              )}
             </div>
           </div>
         )}
@@ -236,7 +235,7 @@ export function ChatPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { t, locale, errorText } = useI18n();
-  const { user, config, plan, setBalance, refreshBalance } = useSession();
+  const { user, config, plan, balance, setBalance, refreshBalance } = useSession();
   const { upsert, reload } = useConversations();
   const toast = useToast();
   const [messages, setMessages] = useState<Msg[]>([]);
@@ -372,6 +371,7 @@ export function ChatPage() {
         void reload();
       } catch (e) {
         toast(errorText(e), "error");
+        if ((e as ApiError).code === "insufficient_tokens") void refreshBalance();
       } finally {
         setBusy(false);
       }
@@ -544,6 +544,7 @@ export function ChatPage() {
         )}
       </div>
       <div className="composer-wrap">
+        {balance && balance.remaining < Math.max(1500, balance.total * 0.05) && <UpgradeCard compact />}
         <div className={`composer ${build ? "build" : ""}`}>
           {files.length > 0 && (
             <div className="composer-files">

@@ -7,6 +7,7 @@ import { useSession } from "../../lib/session";
 import { Confirm } from "../../components/Modal";
 import { Bars } from "../../components/Bars";
 import { useToast } from "../../components/Toast";
+import { PlanGrid } from "../Pricing";
 
 export function Billing() {
   const { t, locale, errorText } = useI18n();
@@ -27,6 +28,10 @@ export function Billing() {
   useEffect(() => {
     void load().catch((e) => toast(errorText(e), "error"));
   }, [page]);
+
+  useEffect(() => {
+    if (window.location.hash === "#plans") setTimeout(() => document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" }), 250);
+  }, [overview]);
 
   useEffect(() => {
     if (params.get("checkout") !== "success") return;
@@ -58,7 +63,7 @@ export function Billing() {
             <h1>{t("billing.title")}</h1>
             <p>{t("billing.howCounted")}</p>
           </div>
-          {user?.plan !== "premium" && user?.plan !== "custom" && <Link to="/app/pricing" className="btn primary"><Sparkles size={15} /> {t("nav.upgrade")}</Link>}
+          {user?.plan !== "premium" && user?.plan !== "custom" && <Link to="/app/billing#plans" onClick={() => document.getElementById("plans")?.scrollIntoView({ behavior: "smooth" })} className="btn primary"><Sparkles size={15} /> {t("nav.upgrade")}</Link>}
         </div>
         {notice && <div className={`alert ${notice.kind}`} style={{ marginBottom: 16 }}>{notice.kind === "info" && <Loader2 size={16} className="spin" />} {notice.text}</div>}
         <div className="grid cols-4" style={{ marginBottom: 16 }}>
@@ -85,6 +90,9 @@ export function Billing() {
             {history && <Bars data={history.daily.map((d: any) => ({ day: d.day, value: d.tokens }))} locale={locale} />}
           </div>
         </div>
+
+        <h2 className="section-title" id="plans" style={{ marginTop: 32, scrollMarginTop: 24 }}>{t("billing.plans")}</h2>
+        <PlanGrid inApp />
 
         {overview?.subscriptions?.length > 0 && (
           <>

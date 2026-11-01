@@ -6,7 +6,7 @@ import { body, email as emailSchema, normalizeEmail, password as passwordSchema 
 import { badRequest, conflict, forbidden, unauthorized, AppError } from "../lib/errors.js";
 import { createSession, destroySession, issueCsrf, requireAuth } from "../middleware/auth.js";
 import { limiter } from "../lib/rateLimit.js";
-import { ipHash, requestLocale } from "../lib/request.js";
+import { ipHash } from "../lib/request.js";
 import { consumeVerification, hashPassword, issueVerification, publicUser, uniqueReferralCode, verifyPassword } from "../services/users.js";
 import { qualifyReferral, recordReferral } from "../services/referrals.js";
 import { ensureBalance } from "../services/tokens.js";
@@ -48,7 +48,7 @@ authRouter.post("/signup", strictLimiter, async (req, res) => {
     normalizedEmail: normalized,
     name: input.name,
     passwordHash: await hashPassword(input.password),
-    locale: input.locale || requestLocale(req),
+    locale: input.locale || "en",
     referralCode: await uniqueReferralCode(),
     signupIpHash: ipHash(req)
   });
@@ -274,7 +274,7 @@ authRouter.get("/google/callback", authLimiter, async (req, res) => {
       googleId: info.sub,
       emailVerified: true,
       emailVerifiedAt: new Date(),
-      locale: String(info.locale || "").startsWith("fr") ? "fr" : requestLocale(req),
+      locale: "en",
       referralCode: await uniqueReferralCode(),
       signupIpHash: ipHash(req)
     });

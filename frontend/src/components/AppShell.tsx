@@ -204,7 +204,7 @@ function Sidebar({ onCollapse, onNavigate }: { onCollapse: () => void; onNavigat
             <div className="row">
               <span className="dim">{t("nav.resets", { when: relativeTime(balance.resetAt, locale) })}</span>
               {user!.plan !== "premium" && user!.plan !== "custom" && (
-                <Link to="/app/pricing" className="link" onClick={onNavigate} style={{ fontSize: 12, fontWeight: 600, display: "inline-flex", gap: 4, alignItems: "center" }}>
+                <Link to="/app/billing#plans" className="link" onClick={onNavigate} style={{ fontSize: 12, fontWeight: 600, display: "inline-flex", gap: 4, alignItems: "center" }}>
                   <Sparkles size={12} /> {t("nav.upgrade")}
                 </Link>
               )}
