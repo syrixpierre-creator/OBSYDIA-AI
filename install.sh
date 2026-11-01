@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
+{
 
 REPO_URL="${OBSYDIA_REPO:-https://github.com/syrixpierre-creator/OBSYDIA-AI.git}"
 BRANCH="${OBSYDIA_BRANCH:-main}"
@@ -150,7 +151,7 @@ if [[ -z "$KEYS_NOW" || "$KEYS_NOW" == "[]" ]]; then
 fi
 
 GENERATED_ADMIN_PASSWORD=""
-if [[ -z "$(env_get ADMIN_PASSWORD)" && "$EXISTING" == "0" ]]; then
+if [[ -z "$(env_get ADMIN_PASSWORD)" ]]; then
   ADMIN_EMAIL_VALUE="${ADMIN_EMAIL:-$(env_get ADMIN_EMAIL)}"
   ADMIN_EMAIL_VALUE="$(ask "Administrator email" "${ADMIN_EMAIL_VALUE:-inconnuboytech@gmail.com}")"
   sed -i "s|^ADMIN_EMAIL=.*|ADMIN_EMAIL=$ADMIN_EMAIL_VALUE|" .env
@@ -221,7 +222,7 @@ ok "Containers started"
 
 step "Waiting for the application"
 for i in $(seq 1 60); do
-  if docker compose exec -T app node -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
+  if docker compose exec -T app node </dev/null -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
     ok "Application healthy (database connected, indexes initialized)"
     HEALTHY=1
     break
@@ -254,3 +255,5 @@ printf '\n  %sUpdate:%s  sudo %s/update.sh\n' "$c_dim" "$c_reset" "$INSTALL_DIR"
 printf '  %sBackup:%s  sudo %s/backup.sh\n' "$c_dim" "$c_reset" "$INSTALL_DIR"
 printf '  %sLogs:%s    cd %s && docker compose logs -f\n\n' "$c_dim" "$c_reset" "$INSTALL_DIR"
 if [[ -z "$(env_get SMTP_HOST)" ]]; then warn "SMTP is not configured: users cannot receive verification emails until you set SMTP_* in .env and run update.sh"; fi
+exit 0
+}

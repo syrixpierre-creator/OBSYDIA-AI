@@ -23,7 +23,7 @@ docker compose build --pull app
 echo "▸ Restarting (volumes are preserved)"
 docker compose up -d --remove-orphans
 for i in $(seq 1 60); do
-  if docker compose exec -T app node -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
+  if docker compose exec -T app node </dev/null -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1; then
     echo "✓ Update complete — application healthy ($NEW)"
     docker image prune -f >/dev/null 2>&1 || true
     exit 0

@@ -34,7 +34,7 @@ echo "▸ Restoring uploads and artifacts"
 docker compose run --rm --no-deps -T --entrypoint sh app -c 'find /data -mindepth 1 -delete && tar -C /data -xzf -' <"$DIR/data.tar.gz"
 docker compose up -d
 for i in $(seq 1 40); do
-  docker compose exec -T app node -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1 && break
+  docker compose exec -T app node </dev/null -e "fetch('http://127.0.0.1:8080/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))" >/dev/null 2>&1 && break
   sleep 3
 done
 ./healthcheck.sh && echo "✓ Restore complete"
