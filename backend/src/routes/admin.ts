@@ -149,6 +149,12 @@ const aiSchema = z.object({
   personality: z.string().trim().max(2000).optional(),
   systemPrompt: z.string().trim().max(20_000).optional(),
   welcomeMessage: z.string().trim().max(500).optional(),
+  welcomeMessageFr: z.string().trim().max(500).optional(),
+  welcomeSubtitle: z.object({ en: z.string().trim().max(200), fr: z.string().trim().max(200) }).partial().optional(),
+  suggestions: z
+    .object({ en: z.array(z.string().trim().min(1).max(300)).max(8), fr: z.array(z.string().trim().min(1).max(300)).max(8) })
+    .partial()
+    .optional(),
   defaultLanguage: z.enum(["auto", "en", "fr"]).optional(),
   model: z.string().trim().max(200).optional(),
   models: z.array(z.string().trim().min(1).max(200)).max(30).optional(),

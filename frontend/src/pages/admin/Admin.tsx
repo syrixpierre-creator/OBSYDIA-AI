@@ -169,7 +169,15 @@ function AiConfig() {
   const [form, setForm] = useState<any>(null);
   const [remote, setRemote] = useState<string[] | null>(null);
   useEffect(() => {
-    if (data) setForm({ ...data.effective, models: data.effective.models.join("\n") });
+    if (data)
+      setForm({
+        ...data.effective,
+        models: data.effective.models.join("\n"),
+        subEn: data.effective.welcomeSubtitle?.en ?? "",
+        subFr: data.effective.welcomeSubtitle?.fr ?? "",
+        sugEn: (data.effective.suggestions?.en || []).join("\n"),
+        sugFr: (data.effective.suggestions?.fr || []).join("\n")
+      });
   }, [data]);
   if (!form) return <div className="skeleton" style={{ height: 300 }} />;
   const save = async () => {
@@ -179,6 +187,12 @@ function AiConfig() {
         personality: form.personality,
         systemPrompt: form.systemPrompt,
         welcomeMessage: form.welcomeMessage,
+        welcomeMessageFr: form.welcomeMessageFr,
+        welcomeSubtitle: { en: form.subEn, fr: form.subFr },
+        suggestions: {
+          en: form.sugEn.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 8),
+          fr: form.sugFr.split("\n").map((s: string) => s.trim()).filter(Boolean).slice(0, 8)
+        },
         defaultLanguage: form.defaultLanguage,
         model: form.model,
         models: form.models.split("\n").map((s: string) => s.trim()).filter(Boolean),
@@ -206,7 +220,18 @@ function AiConfig() {
           </select>
         </label>
       </div>
-      <label className="field"><span>Welcome message</span><input className="input" value={form.welcomeMessage} onChange={(e) => setForm({ ...form, welcomeMessage: e.target.value })} /></label>
+      <div className="card card-pad stack" style={{ gap: 16 }}>
+        <span className="label">Chat welcome screen</span>
+        <div className="grid cols-2">
+          <label className="field"><span>Welcome message — English</span><input className="input" value={form.welcomeMessage} onChange={(e) => setForm({ ...form, welcomeMessage: e.target.value })} /></label>
+          <label className="field"><span>Welcome message — Français</span><input className="input" value={form.welcomeMessageFr} onChange={(e) => setForm({ ...form, welcomeMessageFr: e.target.value })} /></label>
+          <label className="field"><span>Subtitle — English</span><input className="input" value={form.subEn} onChange={(e) => setForm({ ...form, subEn: e.target.value })} /></label>
+          <label className="field"><span>Subtitle — Français</span><input className="input" value={form.subFr} onChange={(e) => setForm({ ...form, subFr: e.target.value })} /></label>
+          <label className="field"><span>Suggestions — English</span><textarea className="textarea" style={{ minHeight: 130 }} value={form.sugEn} onChange={(e) => setForm({ ...form, sugEn: e.target.value })} /></label>
+          <label className="field"><span>Suggestions — Français</span><textarea className="textarea" style={{ minHeight: 130 }} value={form.sugFr} onChange={(e) => setForm({ ...form, sugFr: e.target.value })} /></label>
+        </div>
+        <small className="dim">One suggestion per line, up to 8. Start a line with <span className="mono">build:</span> to open it in project-builder mode. Leave the subtitle empty to hide it.</small>
+      </div>
       <label className="field"><span>Personality</span><textarea className="textarea" value={form.personality} onChange={(e) => setForm({ ...form, personality: e.target.value })} /></label>
       <label className="field"><span>System prompt</span><textarea className="textarea mono" style={{ minHeight: 180, fontSize: 13 }} value={form.systemPrompt} onChange={(e) => setForm({ ...form, systemPrompt: e.target.value })} /><small>Creator identity rules are always appended automatically.</small></label>
       <div className="grid cols-2">

@@ -15,7 +15,13 @@ publicRouter.get("/config", async (_req, res) => {
   res.setHeader("Cache-Control", "public, max-age=30");
   res.json({
     app: { name: e.APP_NAME, creator: e.APP_CREATOR, email: e.APP_EMAIL, url: e.APP_URL },
-    ai: { displayName: ai.displayName, welcomeMessage: ai.welcomeMessage, model: ai.model, models: ai.models, capabilities: ai.capabilities },
+    ai: {
+      displayName: ai.displayName,
+      welcomeMessage: ai.welcomeMessage,
+      welcomeMessageFr: ai.welcomeMessageFr,
+      welcomeSubtitle: ai.welcomeSubtitle,
+      suggestions: ai.suggestions,
+      model: ai.model, models: ai.models, capabilities: ai.capabilities },
     auth: { google: Boolean(e.GOOGLE_CLIENT_ID && e.GOOGLE_CLIENT_SECRET), emailDelivery: mailConfigured() || e.NODE_ENV !== "production" },
     payments: { stripe: stripeConfigured(), paypal: paypalConfigured(), stripePublishableKey: e.STRIPE_PUBLISHABLE_KEY || null },
     voice: { transcription: await transcriptionAvailable() },

@@ -7,6 +7,9 @@ export interface AiSettings {
   personality: string;
   systemPrompt: string;
   welcomeMessage: string;
+  welcomeMessageFr: string;
+  welcomeSubtitle: { en: string; fr: string };
+  suggestions: { en: string[]; fr: string[] };
   defaultLanguage: "auto" | "en" | "fr";
   provider: string;
   model: string;
@@ -23,6 +26,22 @@ export function envAiSettings(): AiSettings {
     personality: e.AI_PERSONALITY,
     systemPrompt: e.AI_SYSTEM_PROMPT,
     welcomeMessage: e.AI_WELCOME_MESSAGE,
+    welcomeMessageFr: "Bienvenue sur OBSYDIA AI. Que souhaitez-vous créer aujourd'hui ?",
+    welcomeSubtitle: { en: "Think. Create. Build. Deploy.", fr: "Pensez. Créez. Construisez. Déployez." },
+    suggestions: {
+      en: [
+        "build: Build a responsive portfolio website with a dark theme",
+        "Explain how JWT authentication works with an example",
+        "Find the bug in my JavaScript function",
+        "Plan a REST API for a task manager with Express and MongoDB"
+      ],
+      fr: [
+        "build: Crée un site portfolio responsive au thème sombre",
+        "Explique le fonctionnement de l'authentification JWT avec un exemple",
+        "Trouve le bug dans ma fonction JavaScript",
+        "Planifie une API REST de gestion de tâches avec Express et MongoDB"
+      ]
+    },
     defaultLanguage: e.AI_DEFAULT_LANGUAGE,
     provider: e.AI_PROVIDER,
     model: e.XKIRO_MODEL,
@@ -59,7 +78,7 @@ export async function getAiSettings(): Promise<AiSettings> {
   const merged: AiSettings = { ...base };
   for (const [k, v] of Object.entries(overrides)) {
     if (v === undefined || v === null || v === "") continue;
-    (merged as any)[k] = k === "capabilities" ? { ...base.capabilities, ...(v as object) } : v;
+    (merged as any)[k] = k === "capabilities" || k === "welcomeSubtitle" || k === "suggestions" ? { ...(base as any)[k], ...(v as object) } : v;
   }
   if (!merged.models.includes(merged.model)) merged.models = [merged.model, ...merged.models];
   return merged;

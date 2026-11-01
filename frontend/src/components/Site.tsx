@@ -26,8 +26,7 @@ export function SiteNav() {
             <Link to="/app" className="nav-avatar" aria-label={user.name} title={user.name}>{user.name.slice(0, 1).toUpperCase()}</Link>
           ) : (
             <>
-              <Link to="/login" className="btn ghost sm hide-sm">{t("nav.login")}</Link>
-              <Link to="/register" className="btn primary sm">{t("nav.signup")}</Link>
+              <Link to="/login" className="btn ghost sm">{t("nav.login")}</Link>
             </>
           )}
           <button className="icon-btn site-menu-btn" onClick={() => setOpen((o) => !o)} aria-label={t("nav.menu")}>

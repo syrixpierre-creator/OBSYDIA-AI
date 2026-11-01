@@ -480,12 +480,14 @@ export function ChatPage() {
   };
 
   const lastAssistant = [...messages].reverse().find((m) => m.role === "assistant");
-  const suggestions = [
-    { icon: Layers, text: t("chat.suggest1"), build: true },
-    { icon: Code2, text: t("chat.suggest2") },
-    { icon: Bug, text: t("chat.suggest3") },
-    { icon: Sparkles, text: t("chat.suggest4") }
-  ];
+  const icons = [Layers, Code2, Bug, Sparkles];
+  const rawSuggestions = (config?.ai.suggestions?.[locale] || []).filter(Boolean);
+  const suggestions = (rawSuggestions.length ? rawSuggestions : [`build: ${t("chat.suggest1")}`, t("chat.suggest2"), t("chat.suggest3"), t("chat.suggest4")]).map((s, i) => {
+    const build = /^build:\s*/i.test(s);
+    return { icon: build ? Hammer : icons[i % icons.length]!, text: s.replace(/^build:\s*/i, ""), build };
+  });
+  const welcomeTitle = (locale === "fr" ? config?.ai.welcomeMessageFr : config?.ai.welcomeMessage) || config?.ai.welcomeMessage;
+  const welcomeSub = config?.ai.welcomeSubtitle?.[locale] ?? t("brand.tagline");
   const models = config?.ai.models || [];
   const placeholder = build ? t("chat.placeholderBuild") : t("chat.placeholder", { name: config?.ai.displayName || "OBSYDIA" });
 
@@ -495,8 +497,8 @@ export function ChatPage() {
         {!id && messages.length === 0 ? (
           <div className="welcome">
             <Mark size={56} />
-            <h1 style={{ marginTop: 20 }}>{config?.ai.welcomeMessage}</h1>
-            <p>{t("brand.tagline")}</p>
+            <h1 style={{ marginTop: 20 }}>{welcomeTitle}</h1>
+            {welcomeSub && <p>{welcomeSub}</p>}
             <div className="suggestions">
               {suggestions.map((s) => (
                 <button
