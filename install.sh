@@ -49,7 +49,7 @@ env_set_if_empty() {
 }
 
 printf '%s\n' "${c_bold}OBSYDIA AI${c_reset} ${c_dim}· Think. Create. Build. Deploy.${c_reset}"
-printf '%s\n' "${c_dim}SYRIX VISION COMPANY — one-command VPS installer${c_reset}"
+printf '%s\n' "${c_dim}by Inconnu Boy Sensei — one-command VPS installer${c_reset}"
 
 step "Checking system"
 [[ $EUID -eq 0 ]] || die "Run as root: curl -fsSL <install-url> | sudo bash"

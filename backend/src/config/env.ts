@@ -49,7 +49,6 @@ const schema = z.object({
   PORT: int(8080),
   APP_NAME: z.string().default("OBSYDIA AI"),
   APP_CREATOR: z.string().default("Inconnu Boy Sensei"),
-  APP_COMPANY: z.string().default("SYRIX VISION COMPANY"),
   APP_EMAIL: z.string().email().default("inconnuboytech@gmail.com"),
   APP_URL: z.string().url().default("http://localhost:8080"),
   CORS_ORIGINS: z.string().optional().default(""),

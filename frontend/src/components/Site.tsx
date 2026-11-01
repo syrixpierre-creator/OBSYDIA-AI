@@ -50,7 +50,7 @@ export function SiteFooter() {
           <div>
             <Logo />
             <p style={{ marginTop: 14, maxWidth: 320 }}>{t("brand.tagline")}</p>
-            <p style={{ marginTop: 6 }}>{config?.app.company || "SYRIX VISION COMPANY"}</p>
+            <p style={{ marginTop: 6 }}>{t("landing.footerCreated")}</p>
           </div>
           <div>
             <h5>{t("nav.features")}</h5>
@@ -71,7 +71,7 @@ export function SiteFooter() {
           </div>
         </div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} OBSYDIA AI · {config?.app.company || "SYRIX VISION COMPANY"}. {t("landing.footerRights")}</span>
+          <span>© {new Date().getFullYear()} OBSYDIA AI. {t("landing.footerRights")}</span>
           <span>{t("landing.footerCreated")}</span>
         </div>
       </div>

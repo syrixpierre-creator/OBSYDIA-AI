@@ -61,7 +61,7 @@ export const fr: Dict = {
   "nav.noChats": "Aucune discussion pour l'instant",
   "nav.menu": "Menu",
 
-  "landing.eyebrow": "OBSYDIA AI · par SYRIX VISION COMPANY",
+  "landing.eyebrow": "OBSYDIA AI · par Inconnu Boy Sensei",
   "landing.hero": "Créez sans limites. Construisez l'avenir.",
   "landing.sub": "Votre espace de travail IA intelligent pour converser, coder, générer des projets et déployer.",
   "landing.ctaStart": "Commencer gratuitement",
@@ -108,7 +108,7 @@ export const fr: Dict = {
   "landing.faq1.q": "Qu'est-ce qu'un jeton ?",
   "landing.faq1.a": "Les jetons mesurent le texte traité par le modèle — votre saisie (y compris les documents joints) et la réponse générée. Votre tableau de bord affiche chaque transaction.",
   "landing.faq2.q": "Qui a créé OBSYDIA AI ?",
-  "landing.faq2.a": "OBSYDIA AI a été créé par Inconnu Boy Sensei, fondateur d'OBSYDIA AI, sous SYRIX VISION COMPANY.",
+  "landing.faq2.a": "OBSYDIA AI a été créé par Inconnu Boy Sensei, son développeur et fondateur.",
   "landing.faq3.q": "Puis-je télécharger le code généré ?",
   "landing.faq3.a": "Oui. Chaque version de projet est empaquetée dans un ZIP téléchargeable, y compris les versions précédentes. Aucun vrai secret n'est inclus — seulement un .env.example.",
   "landing.faq4.q": "Mes données sont-elles privées ?",
@@ -121,6 +121,7 @@ export const fr: Dict = {
   "landing.contactBody": "Partenariats, offres sur mesure ou déploiement entreprise — écrivez à l'équipe OBSYDIA.",
   "landing.footerRights": "Tous droits réservés.",
   "landing.footerCreated": "Créé par Inconnu Boy Sensei",
+  "landing.dev": "Développeur et fondateur",
 
   "auth.loginTitle": "Bon retour",
   "auth.loginSub": "Connectez-vous à votre espace OBSYDIA AI.",

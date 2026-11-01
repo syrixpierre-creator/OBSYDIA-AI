@@ -2,7 +2,7 @@
 
 <h1 align="center">OBSYDIA AI</h1>
 <p align="center"><b>Think. Create. Build. Deploy.</b> · <i>Pensez. Créez. Construisez. Déployez.</i></p>
-<p align="center">Created by <b>Inconnu Boy Sensei</b> · <b>SYRIX VISION COMPANY</b> · inconnuboytech@gmail.com</p>
+<p align="center">Created and developed by <b>Inconnu Boy Sensei</b> · inconnuboytech@gmail.com</p>
 
 OBSYDIA AI is a full-stack AI workspace: streaming conversations, an AI coding agent that plans, generates, validates and packages complete projects, versioned ZIP artifacts, sandboxed live previews, image/document/ZIP/voice inputs, token-based plans with Stripe and PayPal, a developer API, referrals, teams, an admin console, and English/French localization. XKIRO is the primary AI gateway, MongoDB the database.
 
@@ -53,7 +53,7 @@ All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were capt
 | Area | What is implemented |
 |---|---|
 | **Chat** | SSE streaming, context retention, stop, regenerate, edit & resend, copy response/code, feedback, read-aloud, Markdown + GFM tables + LaTeX (KaTeX) + syntax highlighting, rename/delete/pin/search, per-message token usage |
-| **Identity** | Configurable name, personality, system prompt and welcome message (`.env` defaults + admin overrides). Creator answer enforced: *"I was created by Inconnu Boy Sensei, the founder of OBSYDIA AI, under SYRIX VISION COMPANY."* (FR included) |
+| **Identity** | Configurable name, personality, system prompt and welcome message (`.env` defaults + admin overrides). Creator answer enforced: *"I was created by Inconnu Boy Sensei, the developer and founder of OBSYDIA AI."* (FR included) |
 | **Project builder** | Plan → generate in batches → validate (JS syntax via acorn, JSON, missing HTML assets, placeholders) → automatic fix pass → package. Targeted AI edits that inspect existing files and preserve the rest. File explorer, CodeMirror editor, create/rename/delete files, team sharing |
 | **Artifacts** | Real ZIPs with folder structure, README and `.env.example` (real `.env` files are refused), every version kept with snapshot, restore any version, SHA-256, signed links valid 15 minutes and bound to the user |
 | **Live preview** | Desktop / tablet / mobile / fullscreen / new tab / refresh. Served with `CSP: sandbox` in an iframe **without** `allow-same-origin`, so the code runs in an opaque origin, in the visitor's browser, never on the server. Signed, expiring preview tokens |
@@ -294,7 +294,7 @@ MONGODB_TEST_URI=mongodb://127.0.0.1:27017/obsydia-test npm test
 
 ## Français — résumé
 
-**OBSYDIA AI** est une plateforme IA complète créée par **Inconnu Boy Sensei** (SYRIX VISION COMPANY) : discussions en streaming, agent de développement qui planifie, génère, valide et empaquette des projets, ZIP versionnés, aperçu en direct isolé, fichiers/images/ZIP/voix, offres à jetons (Free, Pro 1,99 $, Premium 5 $, Sur mesure), Stripe et PayPal, API développeur documentée sur `/docs`, parrainage, équipes, administration et interface bilingue.
+**OBSYDIA AI** est une plateforme IA complète créée par **Inconnu Boy Sensei**, son développeur : discussions en streaming, agent de développement qui planifie, génère, valide et empaquette des projets, ZIP versionnés, aperçu en direct isolé, fichiers/images/ZIP/voix, offres à jetons (Free, Pro 1,99 $, Premium 5 $, Sur mesure), Stripe et PayPal, API développeur documentée sur `/docs`, parrainage, équipes, administration et interface bilingue.
 
 **Installation VPS en une commande :**
 
@@ -308,4 +308,4 @@ Les clés XKIRO s'ajoutent sans limite dans `.env` ou dans *Administration → C
 
 ---
 
-© OBSYDIA AI · SYRIX VISION COMPANY · inconnuboytech@gmail.com
+© OBSYDIA AI · Inconnu Boy Sensei · inconnuboytech@gmail.com

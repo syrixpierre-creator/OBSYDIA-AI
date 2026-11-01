@@ -59,7 +59,7 @@ export const en = {
   "nav.noChats": "No conversations yet",
   "nav.menu": "Menu",
 
-  "landing.eyebrow": "OBSYDIA AI · by SYRIX VISION COMPANY",
+  "landing.eyebrow": "OBSYDIA AI · by Inconnu Boy Sensei",
   "landing.hero": "Build Beyond Imagination.",
   "landing.sub": "Your intelligent AI workspace for conversations, coding, project generation and deployment.",
   "landing.ctaStart": "Start for Free",
@@ -106,7 +106,7 @@ export const en = {
   "landing.faq1.q": "What counts as a token?",
   "landing.faq1.a": "Tokens measure the text processed by the model — both your input (including attached documents) and the generated output. Your dashboard shows every transaction.",
   "landing.faq2.q": "Who created OBSYDIA AI?",
-  "landing.faq2.a": "OBSYDIA AI was created by Inconnu Boy Sensei, founder of OBSYDIA AI, under SYRIX VISION COMPANY.",
+  "landing.faq2.a": "OBSYDIA AI was created by Inconnu Boy Sensei, its developer and founder.",
   "landing.faq3.q": "Can I download the code it generates?",
   "landing.faq3.a": "Yes. Every project version is packaged as a ZIP you can download, including previous versions. Real secrets are never included — only a .env.example.",
   "landing.faq4.q": "Is my data private?",
@@ -119,6 +119,7 @@ export const en = {
   "landing.contactBody": "Partnerships, custom plans or enterprise deployment — write to the OBSYDIA team.",
   "landing.footerRights": "All rights reserved.",
   "landing.footerCreated": "Created by Inconnu Boy Sensei",
+  "landing.dev": "Developer & founder",
 
   "auth.loginTitle": "Welcome back",
   "auth.loginSub": "Log in to your OBSYDIA AI workspace.",

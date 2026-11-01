@@ -2,7 +2,7 @@
   "name": "obsydia-ai",
   "version": "1.0.0",
   "private": true,
-  "description": "OBSYDIA AI — enterprise AI workspace by SYRIX VISION COMPANY",
+  "description": "OBSYDIA AI — AI workspace by Inconnu Boy Sensei",
   "license": "Apache-2.0",
   "workspaces": ["backend", "frontend"],
   "engines": { "node": ">=20.11" },

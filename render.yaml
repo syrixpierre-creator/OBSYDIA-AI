@@ -39,8 +39,6 @@ services:
         value: OBSYDIA AI
       - key: APP_CREATOR
         value: Inconnu Boy Sensei
-      - key: APP_COMPANY
-        value: SYRIX VISION COMPANY
       - key: APP_EMAIL
         value: inconnuboytech@gmail.com
       - key: AI_DISPLAY_NAME

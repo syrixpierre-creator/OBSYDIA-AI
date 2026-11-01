@@ -18,7 +18,7 @@ function AuthLayout({ children }: { children: ReactNode }) {
         <div>
           <div className="auth-quote">{t("landing.sub")}</div>
           <p className="muted" style={{ marginTop: 14 }}>{t("brand.tagline")}</p>
-          <p className="dim" style={{ marginTop: 24, fontSize: 13 }}>{config?.app.creator} · {config?.app.company}</p>
+          <p className="dim" style={{ marginTop: 24, fontSize: 13 }}>{t("landing.footerCreated")}</p>
         </div>
       </div>
       <div className="auth-main">

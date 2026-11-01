@@ -207,7 +207,7 @@ export function Landing() {
             <a href={`mailto:${config?.app.email}`} style={{ fontSize: 20, fontWeight: 600 }}>{config?.app.email}</a>
             <div className="divider" />
             <div className="row" style={{ justifyContent: "space-between", flexWrap: "wrap" }}>
-              <span className="muted">{config?.app.creator} · {config?.app.company}</span>
+              <span className="muted">{config?.app.creator} · {t("landing.dev")}</span>
               <a className="btn sm" href={`mailto:${config?.app.email}`}><Mail size={14} /> {t("pricing.contact")}</a>
             </div>
           </div>

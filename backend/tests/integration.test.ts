@@ -161,7 +161,7 @@ d("chat", () => {
     const conv = (await client.post("/api/chat/conversations", {})).body.conversation;
     const r = await send(client, conv.id, "Who created you?");
     const text = r.events.filter((e) => e.event === "delta").map((e) => e.data.text).join("");
-    expect(text).toBe("I was created by Inconnu Boy Sensei, the founder of OBSYDIA AI, under SYRIX VISION COMPANY.");
+    expect(text).toBe("I was created by Inconnu Boy Sensei, the developer and founder of OBSYDIA AI.");
     expect(mock.requests.at(-1)!.body.messages[0].content).toContain("your name is OBSYDIA");
   });
 

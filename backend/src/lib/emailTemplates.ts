@@ -79,8 +79,8 @@ export function renderEmail(kind: EmailKind, locale: "en" | "fr", input: Record<
   const url = data.url || e.APP_URL;
   const footer =
     locale === "fr"
-      ? `${e.APP_NAME} · ${e.APP_COMPANY} · Pensez. Créez. Construisez. Déployez.`
-      : `${e.APP_NAME} · ${e.APP_COMPANY} · Think. Create. Build. Deploy.`;
+      ? `${e.APP_NAME} · ${e.APP_CREATOR} · Pensez. Créez. Construisez. Déployez.`
+      : `${e.APP_NAME} · ${e.APP_CREATOR} · Think. Create. Build. Deploy.`;
   const code = data.code
     ? `<p style="font:600 28px/1.2 ui-monospace,Menlo,monospace;letter-spacing:8px;color:#F5F5F7;margin:24px 0">${esc(data.code)}</p>`
     : "";

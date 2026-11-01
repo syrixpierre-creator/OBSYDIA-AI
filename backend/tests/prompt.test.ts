@@ -6,8 +6,8 @@ describe("AI identity and prompt", () => {
   const prompt = buildSystemPrompt(envAiSettings(), { userLanguage: "auto" });
 
   it("includes the exact creator answers", () => {
-    expect(prompt).toContain("I was created by Inconnu Boy Sensei, the founder of OBSYDIA AI, under SYRIX VISION COMPANY.");
-    expect(prompt).toContain("J'ai été créé par Inconnu Boy Sensei, le fondateur d'OBSYDIA AI, sous SYRIX VISION COMPANY.");
+    expect(prompt).toContain("I was created by Inconnu Boy Sensei, the developer and founder of OBSYDIA AI.");
+    expect(prompt).toContain("J'ai été créé par Inconnu Boy Sensei, le développeur et fondateur d'OBSYDIA AI.");
     expect(prompt).toMatch(/Never name any other person/);
   });
 

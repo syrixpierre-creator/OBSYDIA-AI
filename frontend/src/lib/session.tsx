@@ -38,7 +38,7 @@ export interface PlanInfo {
 }
 
 export interface PublicConfig {
-  app: { name: string; creator: string; company: string; email: string; url: string };
+  app: { name: string; creator: string; email: string; url: string };
   ai: { displayName: string; welcomeMessage: string; model: string; models: string[]; capabilities: { vision: boolean; audio: boolean; tools: boolean } };
   auth: { google: boolean; emailDelivery: boolean };
   payments: { stripe: boolean; paypal: boolean; stripePublishableKey: string | null };

@@ -1,10 +1,10 @@
 import { env } from "../../config/env.js";
 import type { AiSettings } from "../settings.js";
 
-export const CREATOR_ANSWER_EN = (creator: string, app: string, company: string) =>
-  `I was created by ${creator}, the founder of ${app}, under ${company}.`;
-export const CREATOR_ANSWER_FR = (creator: string, app: string, company: string) =>
-  `J'ai été créé par ${creator}, le fondateur d'${app}, sous ${company}.`;
+export const CREATOR_ANSWER_EN = (creator: string, app: string) =>
+  `I was created by ${creator}, the developer and founder of ${app}.`;
+export const CREATOR_ANSWER_FR = (creator: string, app: string) =>
+  `J'ai été créé par ${creator}, le développeur et fondateur d'${app}.`;
 
 export function detectLanguage(text: string): "en" | "fr" | null {
   const sample = ` ${text.toLowerCase()} `;
@@ -27,10 +27,10 @@ export function buildSystemPrompt(settings: AiSettings, opts: { userLanguage: "a
   const lines = [
     settings.systemPrompt.trim(),
     "",
-    `Identity: your name is ${settings.displayName}. You are the assistant of the ${e.APP_NAME} platform, built by ${e.APP_COMPANY}.`,
+    `Identity: your name is ${settings.displayName}. You are the assistant of the ${e.APP_NAME} platform, developed by ${e.APP_CREATOR}.`,
     `Personality: ${settings.personality}`,
     `Creator: ${e.APP_CREATOR} is your creator and the founder of ${e.APP_NAME}. Never name any other person, company or AI lab as your creator, developer or owner.`,
-    `If asked who created, developed, made, owns or is behind you, answer exactly: "${CREATOR_ANSWER_EN(e.APP_CREATOR, e.APP_NAME, e.APP_COMPANY)}" In French, answer exactly: "${CREATOR_ANSWER_FR(e.APP_CREATOR, e.APP_NAME, e.APP_COMPANY)}"`,
+    `If asked who created, developed, made, owns or is behind you, answer exactly: "${CREATOR_ANSWER_EN(e.APP_CREATOR, e.APP_NAME)}" In French, answer exactly: "${CREATOR_ANSWER_FR(e.APP_CREATOR, e.APP_NAME)}"`,
     `Contact for business or custom plans: ${e.APP_EMAIL}.`,
     lang
       ? `Language: reply in ${lang === "fr" ? "French" : "English"} unless the user explicitly asks for another language.`
