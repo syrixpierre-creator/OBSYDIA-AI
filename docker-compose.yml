@@ -66,6 +66,12 @@ services:
     profiles: ["redis"]
     command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
 
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: ${OBSYDIA_SUBNET:-172.29.250.0/24}
+
 volumes:
   app-data:
   mongo-data:

@@ -32,7 +32,7 @@ ask_secret() {
   printf '%s' "$answer"
 }
 
-env_get() { grep -E "^$1=" "$INSTALL_DIR/.env" 2>/dev/null | tail -n1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
+env_get() { { grep -E "^$1=" "$INSTALL_DIR/.env" 2>/dev/null || true; } | tail -n1 | cut -d= -f2- | sed -e 's/^"//' -e 's/"$//'; }
 
 env_set_if_empty() {
   local key="$1" value="$2" current
@@ -75,7 +75,7 @@ fi
 step "Installing dependencies"
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
-apt-get install -y -qq ca-certificates curl git openssl jq >/dev/null
+apt-get install -y -qq ca-certificates curl git openssl jq python3 iproute2 >/dev/null
 ok "curl, git, openssl, jq"
 if ! command -v docker >/dev/null 2>&1; then
   info "Installing Docker Engine…"
@@ -177,6 +177,35 @@ fi
 if command -v ufw >/dev/null 2>&1 && ufw status | grep -q "Status: active"; then
   ufw allow 80/tcp >/dev/null; ufw allow 443/tcp >/dev/null; ok "Firewall: ports 80 and 443 opened"
 fi
+
+step "Choosing a free Docker network"
+if [[ -z "$(env_get OBSYDIA_SUBNET)" ]]; then
+  if docker network inspect obsydia_default >/dev/null 2>&1; then
+    EXISTING_SUBNET="$(docker network inspect obsydia_default --format '{{range .IPAM.Config}}{{.Subnet}}{{end}}')"
+    printf 'OBSYDIA_SUBNET=%s\n' "$EXISTING_SUBNET" >>.env
+  else
+    USED="$( (docker network inspect $(docker network ls -q) --format '{{range .IPAM.Config}}{{.Subnet}} {{end}}' 2>/dev/null; ip -o route show | awk '{print $1}'; ip -o addr show | awk '{print $4}') | tr ' ' '\n' | grep -E '^[0-9]+\.' || true)"
+    FREE_SUBNET="$(USED="$USED" python3 - <<'PY'
+import ipaddress, os
+used = []
+for item in os.environ.get("USED", "").split():
+    try:
+        used.append(ipaddress.ip_network(item, strict=False))
+    except ValueError:
+        pass
+candidates = [f"172.29.{i}.0/24" for i in range(250, 255)] + [f"10.213.{i}.0/24" for i in range(1, 255)] + [f"192.168.{i}.0/24" for i in range(200, 255)]
+for c in candidates:
+    net = ipaddress.ip_network(c)
+    if not any(net.overlaps(u) for u in used if u.prefixlen > 0):
+        print(c)
+        break
+PY
+)"
+    [[ -n "$FREE_SUBNET" ]] || die "No free private subnet found for the Docker network"
+    printf 'OBSYDIA_SUBNET=%s\n' "$FREE_SUBNET" >>.env
+  fi
+fi
+ok "Docker network subnet: $(env_get OBSYDIA_SUBNET)"
 
 step "Building and starting containers"
 if [[ "$EXISTING" == "1" ]] && docker compose ps --status running 2>/dev/null | grep -q mongo; then
