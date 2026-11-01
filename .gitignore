@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.env
+.env.*
+!.env.example
+data/
+backups/
+coverage/
+*.log
+.DS_Store
+frontend/dist/
+backend/public/
+infrastructure/caddy/Caddyfile

@@ -1,0 +1,83 @@
+services:
+  - type: web
+    name: obsydia-ai
+    runtime: node
+    plan: starter
+    region: frankfurt
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    disk:
+      name: obsydia-data
+      mountPath: /var/data
+      sizeGB: 5
+    envVars:
+      - key: NODE_VERSION
+        value: 22.12.0
+      - key: NODE_ENV
+        value: production
+      - key: DATA_DIR
+        value: /var/data
+      - key: TRUST_PROXY
+        value: "1"
+      - key: APP_URL
+        sync: false
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: ENCRYPTION_KEY
+        generateValue: true
+      - key: ADMIN_EMAIL
+        value: inconnuboytech@gmail.com
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: APP_NAME
+        value: OBSYDIA AI
+      - key: APP_CREATOR
+        value: Inconnu Boy Sensei
+      - key: APP_COMPANY
+        value: SYRIX VISION COMPANY
+      - key: APP_EMAIL
+        value: inconnuboytech@gmail.com
+      - key: AI_DISPLAY_NAME
+        value: OBSYDIA
+      - key: AI_PROVIDER
+        value: xkiro
+      - key: XKIRO_BASE_URL
+        value: https://api.xkiro.com/v1
+      - key: XKIRO_MODEL
+        value: qwen/qwen3.8-omni-flash:free
+      - key: XKIRO_API_KEYS
+        sync: false
+      - key: SMTP_HOST
+        sync: false
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: SMTP_FROM
+        value: inconnuboytech@gmail.com
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PUBLISHABLE_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: PAYPAL_CLIENT_ID
+        sync: false
+      - key: PAYPAL_CLIENT_SECRET
+        sync: false
+      - key: PAYPAL_WEBHOOK_ID
+        sync: false
+      - key: PAYPAL_MODE
+        value: live
+      - key: PAYPAL_PLAN_ID_PRO
+        sync: false
+      - key: PAYPAL_PLAN_ID_PREMIUM
+        sync: false

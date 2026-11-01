@@ -1,0 +1,18 @@
+{
+	email {$ACME_EMAIL}
+}
+
+__DOMAIN__ {
+	encode zstd gzip
+	header -Server
+	request_body {
+		max_size 60MB
+	}
+	reverse_proxy app:8080 {
+		flush_interval -1
+		transport http {
+			read_timeout 10m
+			write_timeout 10m
+		}
+	}
+}

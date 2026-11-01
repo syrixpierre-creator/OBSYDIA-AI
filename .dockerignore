@@ -1,0 +1,11 @@
+**/node_modules
+**/dist
+backend/public
+.git
+.env
+.env.*
+!.env.example
+data
+backups
+docs/screenshots
+*.log
