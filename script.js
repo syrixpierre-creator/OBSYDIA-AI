@@ -114,8 +114,8 @@ const skills = [
 const half = Math.ceil(skills.length / 2);
 const skillHTML = (list) =>
   list.map((s) => `<span class="mq-item"><i class="${s.icon}" aria-hidden="true"></i>${s.name}</span><span class="mq-sep" aria-hidden="true">/</span>`).join("");
-Motion.initMarquee(document.querySelector('[data-marquee="1"]'), skillHTML(skills.slice(0, half)));
-Motion.initMarquee(document.querySelector('[data-marquee="-1"]'), skillHTML(skills.slice(half)));
+InconnuBoy.initMarquee(document.querySelector('[data-marquee="1"]'), skillHTML(skills.slice(0, half)));
+InconnuBoy.initMarquee(document.querySelector('[data-marquee="-1"]'), skillHTML(skills.slice(half)));
 
 const timeline = document.getElementById("timeline");
 timeline.insertAdjacentHTML(
@@ -150,7 +150,7 @@ setInterval(updateClock, 15000);
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
-Motion.init();
+InconnuBoy.init();
 
 const LANG_ICON = {
   JavaScript: "devicon-javascript-plain", TypeScript: "devicon-typescript-plain",
@@ -193,9 +193,9 @@ async function loadGitHub() {
     own.forEach((r) => r.language && (langs[r.language] = (langs[r.language] || 0) + 1));
     const topLang = Object.entries(langs).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
 
-    Motion.countWhenVisible(document.getElementById("statRepos"), repos.length);
-    Motion.countWhenVisible(document.getElementById("statStars"), stars);
-    Motion.countWhenVisible(document.getElementById("statFollowers"), user.followers ?? 0);
+    InconnuBoy.countWhenVisible(document.getElementById("statRepos"), repos.length);
+    InconnuBoy.countWhenVisible(document.getElementById("statStars"), stars);
+    InconnuBoy.countWhenVisible(document.getElementById("statFollowers"), user.followers ?? 0);
     document.getElementById("statLang").textContent = topLang;
 
     const top = own
@@ -228,7 +228,7 @@ async function loadGitHub() {
       })
       .join("");
     list.setAttribute("data-anim", "stagger");
-    Motion.observe(list.parentElement);
+    InconnuBoy.observe(list.parentElement);
   } catch (err) {
     list.innerHTML = `<li class="repo-list__empty mono">${t("projects.error")}</li>`;
   }

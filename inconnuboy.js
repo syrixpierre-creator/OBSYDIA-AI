@@ -336,7 +336,7 @@
     }, 150);
   });
 
-  window.Motion = {
+  window.InconnuBoy = {
     reduced,
     init() {
       cacheEls();
