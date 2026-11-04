@@ -42,8 +42,6 @@
   }
 
   function splitWords(el) {
-    if (el.dataset.splitDone) return;
-    el.dataset.splitDone = "1";
     const walk = (node) => {
       const frag = document.createDocumentFragment();
       node.childNodes.forEach((child) => {
@@ -72,10 +70,27 @@
       });
       return frag;
     };
-    const out = walk(el);
+    const original = document.createDocumentFragment();
+    while (el.firstChild) original.appendChild(el.firstChild);
+    el._original = original;
+    el.appendChild(walk(original));
+    el.classList.add("is-split");
+    return indexLines(el);
+  }
+
+  function unsplit(el) {
+    if (!el._original) return;
     el.textContent = "";
-    el.appendChild(out);
-    indexLines(el);
+    el.appendChild(el._original);
+    el._original = null;
+  }
+
+  function revealText(el) {
+    const { lines, count } = splitWords(el);
+    void el.offsetWidth;
+    requestAnimationFrame(() => el.classList.add("in-view"));
+    const total = 1200 + lines * 95 + count * 6 + 200;
+    setTimeout(() => unsplit(el), total);
   }
 
   function indexLines(el) {
@@ -91,6 +106,7 @@
       word.style.setProperty("--line", line);
       word.style.setProperty("--word", w++);
     });
+    return { lines: line + 1, count: w };
   }
 
   function runIntro(done) {
@@ -130,17 +146,18 @@
   function observe(scope = document) {
     const els = scope.querySelectorAll("[data-anim]:not(.in-view)");
     if (reduced || !("IntersectionObserver" in window)) {
-      els.forEach((el) => el.classList.add("in-view"));
+      els.forEach((el) => el.classList.add("in-view", "is-split"));
       return;
     }
     if (!io) {
       io = new IntersectionObserver(
         (entries) => {
           entries.forEach((e) => {
-            if (e.isIntersecting) {
-              e.target.classList.add("in-view");
-              io.unobserve(e.target);
-            }
+            if (!e.isIntersecting) return;
+            io.unobserve(e.target);
+            const kind = e.target.dataset.anim;
+            if (kind === "words" || kind === "lines") revealText(e.target);
+            else e.target.classList.add("in-view");
           });
         },
         { threshold: 0.18, rootMargin: "0px 0px -8% 0px" }
@@ -148,7 +165,6 @@
     }
     els.forEach((el) => {
       const kind = el.dataset.anim;
-      if (kind === "words" || kind === "lines") splitWords(el);
       if (kind === "stagger") {
         Array.from(el.children).forEach((c, i) => c.style.setProperty("--s", i));
       }
@@ -332,7 +348,6 @@
     clearTimeout(resizeT);
     resizeT = setTimeout(() => {
       measureMarquees();
-      document.querySelectorAll("[data-split-done]").forEach(indexLines);
     }, 150);
   });
 

@@ -171,6 +171,9 @@ html.menu-open .burger span:last-child { top: 3.5px; transform: rotate(-45deg); 
   background: var(--bg); border: 1px solid var(--line-strong); border-radius: 6px;
 }
 .lang-wrap.is-open .gtranslate { display: block; }
+body > .skiptranslate, .goog-te-banner-frame, #goog-gt-tt, .goog-te-balloon-frame, .VIpgJd-ZVi9od-ORHb-OEVmcd, .VIpgJd-ZVi9od-aZ2wEe-wOHMyf { display: none !important; }
+.goog-text-highlight { background: none !important; box-shadow: none !important; }
+font { vertical-align: inherit !important; }
 .goog-te-gadget { font-family: var(--font-mono) !important; font-size: 0 !important; }
 .goog-te-gadget-icon, .goog-te-gadget > span > a { display: none !important; }
 .goog-te-combo {
@@ -578,8 +581,10 @@ html.js [data-anim="lines"] .w__in {
 }
 html.js [data-anim="words"].in-view .w__in,
 html.js [data-anim="lines"].in-view .w__in { transform: none; }
-html.js [data-anim="words"] { opacity: 1; transform: none; }
-html.js [data-anim="lines"] { opacity: 1; transform: none; }
+html.js [data-anim="words"]:not(.is-split),
+html.js [data-anim="lines"]:not(.is-split) { opacity: 0; }
+html.js [data-anim="words"].is-split,
+html.js [data-anim="lines"].is-split { opacity: 1; transform: none; }
 
 html.js:not(.is-loaded) .hero [data-anim] { transition-delay: 0s !important; }
 .hero [data-anim="up"] { transition-delay: 0.55s; }

@@ -6,7 +6,7 @@ Site statique, sans framework ni dépendance JS : HTML, CSS et JavaScript écrit
 - `index.html` — structure + SEO (title, description, Open Graph, Twitter Card, JSON-LD Schema.org)
 - `styles.css` — design system (tokens, grille 12 colonnes, dark/light, responsive, reduced-motion)
 - `inconnuboy.js` — moteur d'animation maison : intro, split-text, reveals au scroll, marquee sensible à la vitesse de scroll, boutons magnétiques, curseur, compteurs
-- `i18n.js` — traductions EN / FR / PT (détection automatique selon la langue du navigateur)
+- Traduction : Google Translate traduit automatiquement le site dans la langue du navigateur du visiteur (après consentement aux cookies tiers). Aucune clé de langue stockée.
 - `script.js` — thème, navigation, données GitHub en direct (SKYHOST épinglé en premier, dépôts de bots WhatsApp filtrés), consentement cookies
 - `manifest.json`, `robots.txt`, `sitemap.xml` — SEO / PWA
 

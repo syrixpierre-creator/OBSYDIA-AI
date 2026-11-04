@@ -73,29 +73,39 @@ document.addEventListener("click", (e) => {
 function googleTranslateElementInit() {
   new google.translate.TranslateElement({ pageLanguage: "en", autoDisplay: false }, "google_translate_element");
 }
+function visitorLang() {
+  const full = navigator.language || "en";
+  const short = full.toLowerCase().split("-")[0];
+  if (short === "zh") return /tw|hk|hant/i.test(full) ? "zh-TW" : "zh-CN";
+  if (short === "he") return "iw";
+  return short;
+}
+
+function writeTranslateCookie(value, maxAge) {
+  const base = `googtrans=${value};path=/;max-age=${maxAge}`;
+  document.cookie = base;
+  if (location.hostname.includes(".")) document.cookie = `${base};domain=.${location.hostname}`;
+}
+
+function autoTranslate() {
+  if (/(?:^|;\s*)googtrans=/.test(document.cookie)) return;
+  const lang = visitorLang();
+  if (lang !== "en") writeTranslateCookie(`/en/${lang}`, 60 * 60 * 24 * 365);
+}
+
+function clearTranslate() {
+  writeTranslateCookie("", 0);
+}
+
 let translateScriptLoaded = false;
 function loadGoogleTranslate() {
   if (translateScriptLoaded) return;
   translateScriptLoaded = true;
+  autoTranslate();
   const s = document.createElement("script");
   s.src = "https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit";
   document.body.appendChild(s);
 }
-
-const translations = window.TRANSLATIONS;
-function detectLang() {
-  const short = (navigator.language || "en").toLowerCase().split("-")[0];
-  return translations[short] ? short : "en";
-}
-const LANG = detectLang();
-const dict = translations[LANG];
-const t = (key) => dict[key] || translations.en[key] || key;
-
-document.querySelectorAll("[data-i18n]").forEach((el) => {
-  const key = el.getAttribute("data-i18n");
-  if (dict[key]) el.innerHTML = dict[key];
-});
-root.lang = LANG;
 
 const skills = [
   { name: "JavaScript", icon: "devicon-javascript-plain" },
@@ -116,24 +126,6 @@ const skillHTML = (list) =>
   list.map((s) => `<span class="mq-item"><i class="${s.icon}" aria-hidden="true"></i>${s.name}</span><span class="mq-sep" aria-hidden="true">/</span>`).join("");
 InconnuBoy.initMarquee(document.querySelector('[data-marquee="1"]'), skillHTML(skills.slice(0, half)));
 InconnuBoy.initMarquee(document.querySelector('[data-marquee="-1"]'), skillHTML(skills.slice(half)));
-
-const timeline = document.getElementById("timeline");
-timeline.insertAdjacentHTML(
-  "beforeend",
-  [1, 2, 3, 4, 5]
-    .map(
-      (n) => `
-    <article class="tl-item" data-anim="up">
-      <span class="tl-item__dot" aria-hidden="true"></span>
-      <p class="tl-item__date mono">${t(`exp.${n}.date`)}</p>
-      <div>
-        <h3 class="tl-item__title">${t(`exp.${n}.title`)}</h3>
-        <p class="tl-item__text">${t(`exp.${n}.text`)}</p>
-      </div>
-    </article>`
-    )
-    .join("")
-);
 
 const liveClock = document.getElementById("liveClock");
 function updateClock() {
@@ -203,7 +195,7 @@ async function loadGitHub() {
       .slice(0, 6);
 
     if (!top.length) {
-      list.innerHTML = `<li class="repo-list__empty mono">${t("projects.empty")}</li>`;
+      list.innerHTML = `<li class="repo-list__empty mono">No public repositories yet.</li>`;
       return;
     }
 
@@ -215,8 +207,8 @@ async function loadGitHub() {
           <a class="repo" href="${r.html_url}" target="_blank" rel="noopener" data-cursor="GitHub">
             <span class="repo__i mono">${String(i + 1).padStart(2, "0")}</span>
             <span class="repo__main">
-              <span class="repo__name">${escapeHtml(r.name)}</span>
-              <span class="repo__desc">${r.description ? escapeHtml(r.description) : t("projects.noDesc")}</span>
+              <span class="repo__name notranslate" translate="no">${escapeHtml(r.name)}</span>
+              <span class="repo__desc">${r.description ? escapeHtml(r.description) : "No description provided."}</span>
             </span>
             <span class="repo__meta mono">
               ${r.language ? `<span class="repo__lang">${icon ? `<i class="${icon}" aria-hidden="true"></i>` : ""}${escapeHtml(r.language)}</span>` : ""}
@@ -230,7 +222,7 @@ async function loadGitHub() {
     list.setAttribute("data-anim", "stagger");
     InconnuBoy.observe(list.parentElement);
   } catch (err) {
-    list.innerHTML = `<li class="repo-list__empty mono">${t("projects.error")}</li>`;
+    list.innerHTML = `<li class="repo-list__empty mono">Couldn't reach GitHub right now — browse github.com/INCONNU-BOY-SENSEI directly.</li>`;
   }
 }
 loadGitHub();
@@ -275,6 +267,7 @@ function applyConsent(consent) {
     if (mapIframe && !mapIframe.src) mapIframe.src = mapIframe.dataset.src;
     if (mapConsent) mapConsent.hidden = true;
   } else {
+    clearTranslate();
     if (mapIframe) mapIframe.removeAttribute("src");
     if (mapConsent) mapConsent.hidden = false;
   }
