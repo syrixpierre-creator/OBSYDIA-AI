@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" class="no-js">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <!-- ============ SEO ============ -->
+  <title>Inconnu boy sensei (Dawens) — Open Source Full Stack Developer · CEO of SYRIX VISION COMPANY</title>
+  <meta name="description" content="Inconnu boy sensei (Dawens) — Open Source Full Stack Developer based in Maringá, Brazil. CEO &amp; Co-Founder of SYRIX VISION COMPANY. Open to collaborations, partnerships and new roles." />
+  <meta name="author" content="Dawens (Inconnu boy sensei)" />
+  <link rel="canonical" href="https://inconnu-boy-sensei.zone.id/" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Inconnu boy sensei" />
+  <meta property="og:title" content="Inconnu boy sensei — Open Source Full Stack Developer" />
+  <meta property="og:description" content="Portfolio of Dawens (Inconnu boy sensei), open source developer and CEO &amp; co-founder of SYRIX VISION COMPANY." />
+  <meta property="og:image" content="https://inconnu-boy-sensei.zone.id/og-image.png" />
+  <meta property="og:url" content="https://inconnu-boy-sensei.zone.id/" />
+  <meta property="og:locale" content="en_US" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Inconnu boy sensei — Open Source Full Stack Developer" />
+  <meta name="twitter:description" content="Portfolio of Dawens (Inconnu boy sensei), open source developer and CEO &amp; co-founder of SYRIX VISION COMPANY." />
+  <meta name="twitter:image" content="https://inconnu-boy-sensei.zone.id/og-image.png" />
+
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="manifest" href="/manifest.json" />
+  <meta name="theme-color" content="#0C0C0B" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Dawens",
+    "alternateName": "Inconnu boy sensei",
+    "url": "https://inconnu-boy-sensei.zone.id/",
+    "image": "https://inconnu-boy-sensei.zone.id/og-image.png",
+    "email": "mailto:inconnuboytech@gmail.com",
+    "jobTitle": "Open Source Full Stack Developer",
+    "worksFor": {
+      "@type": "Organization",
+      "name": "SYRIX VISION COMPANY",
+      "url": "https://github.com/SYRIX-COMPANY"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Maringá",
+      "addressCountry": "BR"
+    },
+    "sameAs": [
+      "https://github.com/INCONNU-BOY-SENSEI",
+      "https://www.youtube.com/@inconnuboy-sensei",
+      "https://www.tiktok.com/@inconnuboytech",
+      "https://github.com/SYRIX-COMPANY",
+      "https://www.instagram.com/syrixcompany"
+    ]
+  }
+  </script>
+
+  <meta name="google-site-verification" content="dbHowz5g7HJfTHX1sXCPnlLwbWi762Ql1S2ObAoim_E" />
+
+  <!-- Theme + JS flag before paint (avoids flash) -->
+  <script>
+    (function () {
+      var d = document.documentElement;
+      d.classList.remove("no-js");
+      d.classList.add("js");
+      try {
+        var t = localStorage.getItem("theme");
+        if (!t) t = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        d.setAttribute("data-theme", t);
+        if (sessionStorage.getItem("intro_seen")) d.classList.add("intro-skip");
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ============ INTRO ============ -->
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro__row">
+      <span class="intro__name">Inconnu boy sensei</span>
+      <span class="intro__count"><span id="introCount">000</span></span>
+    </div>
+    <div class="intro__bar"><span id="introBar"></span></div>
+  </div>
+
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+  <!-- ============ NAV ============ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <a href="#top" class="nav__brand" aria-label="Inconnu boy sensei — home">
+        <span class="nav__mark">IB</span><span class="nav__brand-text">inconnu boy sensei</span>
+      </a>
+
+      <nav class="nav__links" id="navLinks" aria-label="Primary">
+        <a href="#about" data-i18n="nav.about">About</a>
+        <a href="#work" data-i18n="nav.projects">Work</a>
+        <a href="#stack" data-i18n="nav.stack">Stack</a>
+        <a href="#experience" data-i18n="nav.experience">Experience</a>
+        <a href="#syrix">SYRIX</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+        <span class="nav__indicator" id="navIndicator" aria-hidden="true"></span>
+      </nav>
+
+      <div class="nav__actions">
+        <div class="lang-wrap">
+          <button class="icon-btn" id="langToggle" aria-label="Change language">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 3.8 5.7 3.8 9s-1.3 6.4-3.8 9c-2.5-2.6-3.8-5.7-3.8-9s1.3-6.4 3.8-9Z"/></svg>
+          </button>
+          <div id="google_translate_element" class="gtranslate" aria-hidden="true"></div>
+        </div>
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle theme">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16Z" fill="currentColor"/></svg>
+        </button>
+        <button class="icon-btn" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+          <span class="burger"><span></span><span></span></span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============ HERO ============ -->
+    <section class="hero" id="top">
+      <div class="hero__inner wrap">
+        <div class="hero__top">
+          <p class="kicker" data-anim="fade">
+            <span class="pulse" aria-hidden="true"></span>
+            <span data-i18n="hero.status">Available — collabs, partnerships &amp; new roles</span>
+          </p>
+          <p class="kicker kicker--right" data-anim="fade">
+            <span data-i18n="hero.local">Local time, Maringá</span>
+            <span class="mono" id="liveClock">--:--</span>
+          </p>
+        </div>
+
+        <h1 class="hero__title" id="heroTitle" aria-label="Inconnu boy sensei">
+          <span class="line"><span class="line__in" data-split>Inconnu</span></span>
+          <span class="line line--indent"><span class="line__in" data-split>boy <em>sensei</em></span></span>
+        </h1>
+
+        <div class="hero__bottom">
+          <p class="hero__lead" data-anim="up" data-i18n="hero.lead">
+            Open source full stack developer and CEO &amp; co-founder of SYRIX VISION COMPANY. I design and ship web and Android products — from the API to the last pixel.
+          </p>
+          <div class="hero__actions" data-anim="up">
+            <a href="#work" class="btn btn--solid" data-magnetic>
+              <span class="btn__label" data-i18n="hero.cta1">See the work</span>
+              <span class="btn__icon" aria-hidden="true">↓</span>
+            </a>
+            <a href="#contact" class="btn btn--line" data-magnetic>
+              <span class="btn__label" data-i18n="hero.cta2">Start a project</span>
+            </a>
+          </div>
+        </div>
+
+        <ul class="hero__meta" data-anim="stagger">
+          <li><span class="meta__k" data-i18n="hero.metaRole">Role</span><span class="meta__v">Full Stack · Open Source</span></li>
+          <li><span class="meta__k" data-i18n="hero.metaCompany">Company</span><span class="meta__v">SYRIX VISION — CEO</span></li>
+          <li><span class="meta__k" data-i18n="hero.metaBased">Based in</span><span class="meta__v" data-i18n="hero.metaBasedV">Maringá, Brazil</span></li>
+          <li><span class="meta__k" data-i18n="hero.metaSince">Shipping since</span><span class="meta__v">2024</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ ABOUT ============ -->
+    <section class="section" id="about">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">01</span>
+          <span class="label" data-i18n="about.eyebrow">About</span>
+        </header>
+        <div class="section__body">
+          <h2 class="statement" data-anim="words" data-i18n="about.title">I build tools people keep using — clean APIs, honest interfaces, and code that still reads well six months later.</h2>
+          <div class="about__cols">
+            <p data-anim="up" data-i18n="about.p1">I'm Dawens, known online as Inconnu boy sensei — an open source full stack developer based in Maringá, Brazil. Most of my work lives in the open on GitHub, where I build web and Android apps and collaborate with other developers.</p>
+            <p data-anim="up" data-i18n="about.p2">I'm also the CEO &amp; co-founder of SYRIX VISION COMPANY, a small team shipping open source software together. I publish tutorials and build logs on YouTube and TikTok.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ WORK ============ -->
+    <section class="section" id="work">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">02</span>
+          <span class="label" data-i18n="projects.eyebrow">Selected work</span>
+        </header>
+        <div class="section__body">
+          <h2 class="title" data-anim="lines" data-i18n="projects.title">Built in the open.</h2>
+
+          <a class="feature" href="https://inconnu.zone.id" target="_blank" rel="noopener" data-anim="clip" data-cursor="Open">
+            <div class="feature__visual" aria-hidden="true">
+              <div class="apk">
+                <div class="apk__file">
+                  <span class="apk__tag">&lt;/&gt;</span>
+                  <span class="apk__lines"><i></i><i></i><i></i><i></i></span>
+                  <span class="apk__label">index.html</span>
+                </div>
+                <div class="apk__arrow"><span></span></div>
+                <div class="apk__phone">
+                  <span class="apk__notch"></span>
+                  <span class="apk__screen"><i></i><i></i><i></i></span>
+                  <span class="apk__label">app.apk</span>
+                </div>
+              </div>
+            </div>
+            <div class="feature__body">
+              <p class="feature__badge mono" data-i18n="projects.featuredBadge">Featured — Live</p>
+              <h3 class="feature__title" data-i18n="projects.featuredTitle">Web &amp; HTML to APK</h3>
+              <p class="feature__desc" data-i18n="projects.featuredDesc">Converts websites and HTML projects directly into installable Android APKs — no Android Studio required.</p>
+              <span class="feature__link mono">inconnu.zone.id <span aria-hidden="true">↗</span></span>
+            </div>
+          </a>
+
+          <div class="stats" id="statsRow">
+            <div class="stat"><span class="stat__v" id="statRepos">—</span><span class="stat__k" data-i18n="projects.statRepos">Public repos</span></div>
+            <div class="stat"><span class="stat__v" id="statStars">—</span><span class="stat__k" data-i18n="projects.statStars">Stars</span></div>
+            <div class="stat"><span class="stat__v" id="statFollowers">—</span><span class="stat__k" data-i18n="projects.statFollowers">Followers</span></div>
+            <div class="stat"><span class="stat__v" id="statLang">—</span><span class="stat__k" data-i18n="projects.statLang">Top language</span></div>
+          </div>
+
+          <div class="repos">
+            <div class="repos__head mono">
+              <span data-i18n="projects.moreEyebrow">From GitHub</span>
+              <a href="https://github.com/INCONNU-BOY-SENSEI" target="_blank" rel="noopener" class="link-u">github.com/INCONNU-BOY-SENSEI ↗</a>
+            </div>
+            <ol class="repo-list" id="repoList">
+              <li class="repo-list__empty mono" data-i18n="projects.loading">Fetching repositories…</li>
+            </ol>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section class="section section--flush" id="stack">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">03</span>
+          <span class="label" data-i18n="stack.eyebrow">Stack</span>
+        </header>
+        <div class="section__body">
+          <h2 class="title" data-anim="lines" data-i18n="stack.title">Tools I reach for.</h2>
+        </div>
+      </div>
+      <div class="marquee" data-marquee="1" aria-label="Technologies"><div class="marquee__track" id="marqueeA"></div></div>
+      <div class="marquee marquee--outline" data-marquee="-1" aria-hidden="true"><div class="marquee__track" id="marqueeB"></div></div>
+    </section>
+
+    <!-- ============ EXPERIENCE ============ -->
+    <section class="section" id="experience">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">04</span>
+          <span class="label" data-i18n="exp.eyebrow">Experience</span>
+        </header>
+        <div class="section__body">
+          <h2 class="title" data-anim="lines" data-i18n="exp.title">Where the work has gone.</h2>
+          <div class="timeline" id="timeline">
+            <span class="timeline__rail" aria-hidden="true"><span id="timelineFill"></span></span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ SYRIX ============ -->
+    <section class="section section--invert" id="syrix">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">05</span>
+          <span class="label">Syrix Vision Company</span>
+        </header>
+        <div class="section__body">
+          <h2 class="syrix__title" data-anim="lines">SYRIX<br />VISION<em>.</em></h2>
+          <p class="syrix__text" data-anim="up" data-i18n="syrix.text">A small team building open source software and independent tools — founded and led by Inconnu boy sensei, CEO &amp; Co-Founder. We ship what we'd want to use ourselves.</p>
+          <ul class="rows" data-anim="stagger">
+            <li><a href="https://github.com/SYRIX-COMPANY" target="_blank" rel="noopener" class="row"><span>GitHub</span><span class="row__meta mono">SYRIX-COMPANY</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+            <li><a href="https://www.instagram.com/syrixcompany" target="_blank" rel="noopener" class="row"><span>Instagram</span><span class="row__meta mono">@syrixcompany</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+            <li><a href="mailto:syrixcompany@gmail.com" class="row"><span>Email</span><span class="row__meta mono">syrixcompany@gmail.com</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ OPEN TO ============ -->
+    <section class="section" id="open">
+      <div class="wrap grid">
+        <header class="section__head">
+          <span class="index">06</span>
+          <span class="label" data-i18n="open.eyebrow">Open to</span>
+        </header>
+        <div class="section__body">
+          <h2 class="title" data-anim="lines" data-i18n="open.title">Currently open.</h2>
+          <div class="offers" data-anim="stagger">
+            <a class="offer" href="mailto:inconnuboytech@gmail.com?subject=Collaboration" data-spot>
+              <span class="offer__status mono"><span class="pulse"></span><span data-i18n="open.statusOpen">Open</span></span>
+              <h3 class="offer__title" data-i18n="open.collabTitle">Collaboration</h3>
+              <p class="offer__text" data-i18n="open.collabText">Open source projects, side builds, tooling — if it's well scoped and interesting, let's build it together.</p>
+              <span class="offer__cta mono"><span data-i18n="open.cta">Write to me</span> →</span>
+            </a>
+            <a class="offer" href="mailto:inconnuboytech@gmail.com?subject=Partnership" data-spot>
+              <span class="offer__status mono"><span class="pulse"></span><span data-i18n="open.statusOpen">Open</span></span>
+              <h3 class="offer__title" data-i18n="open.partnerTitle">Partnership</h3>
+              <p class="offer__text" data-i18n="open.partnerText">Brands, creators and companies — product partnerships, sponsored content on YouTube &amp; TikTok, or joint ventures with SYRIX VISION.</p>
+              <span class="offer__cta mono"><span data-i18n="open.cta">Write to me</span> →</span>
+            </a>
+            <a class="offer" href="mailto:inconnuboytech@gmail.com?subject=Job%20opportunity%20%E2%80%94%20CV%20request" data-spot>
+              <span class="offer__status mono"><span class="pulse"></span><span data-i18n="open.statusCv">CV open</span></span>
+              <h3 class="offer__title" data-i18n="open.cvTitle">Hiring</h3>
+              <p class="offer__text" data-i18n="open.cvText">Open to full-time, freelance and contract roles. My CV is available on request — send me the role and I'll reply with it.</p>
+              <span class="offer__cta mono"><span data-i18n="open.cvCta">Request my CV</span> →</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ CONTACT ============ -->
+    <section class="contact" id="contact">
+      <div class="wrap">
+        <p class="contact__kicker mono"><span class="index">07</span> <span data-i18n="contact.eyebrow">Contact</span></p>
+        <h2 class="contact__title" data-anim="lines">
+          <span data-i18n="contact.title">Let's build</span><br /><em data-i18n="contact.title2">something real.</em>
+        </h2>
+
+        <a class="contact__mail" href="mailto:inconnuboytech@gmail.com" data-magnetic data-cursor="Email">
+          <span class="contact__mail-text">inconnuboytech@gmail.com</span>
+          <span class="contact__mail-arrow" aria-hidden="true">→</span>
+        </a>
+
+        <ul class="rows rows--contact" data-anim="stagger">
+          <li><a class="row" href="https://github.com/INCONNU-BOY-SENSEI" target="_blank" rel="noopener">
+            <span class="row__ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M12 .5C5.73.5.5 5.73.5 12c0 5.08 3.29 9.39 7.86 10.91.57.1.78-.25.78-.55v-1.94c-3.2.7-3.88-1.54-3.88-1.54-.52-1.34-1.28-1.7-1.28-1.7-1.04-.72.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.69 0-1.26.45-2.29 1.19-3.1-.12-.29-.52-1.46.11-3.05 0 0 .97-.31 3.18 1.18a11.1 11.1 0 0 1 5.8 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.59.23 2.76.11 3.05.74.81 1.19 1.84 1.19 3.1 0 4.42-2.7 5.4-5.26 5.68.42.36.78 1.07.78 2.16v3.2c0 .3.2.66.79.55A10.52 10.52 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z"/></svg></span>
+            <span>GitHub</span><span class="row__meta mono" data-i18n="contact.ghMeta">All my projects</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="row" href="https://www.youtube.com/@inconnuboy-sensei" target="_blank" rel="noopener">
+            <span class="row__ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4l6.3 3.6-6.3 3.6Z"/></svg></span>
+            <span>YouTube</span><span class="row__meta mono">@inconnuboy-sensei</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="row" href="https://www.tiktok.com/@inconnuboytech" target="_blank" rel="noopener">
+            <span class="row__ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 0 1-2.6 2.5 2.6 2.6 0 0 1-2.6-2.6 2.6 2.6 0 0 1 3.4-2.5V9.6a5.7 5.7 0 0 0-6.5 5.7 5.7 5.7 0 0 0 5.7 5.7 5.7 5.7 0 0 0 5.7-5.7V9a7.4 7.4 0 0 0 4.3 1.4V7.3a4.3 4.3 0 0 1-3.2-1.5Z"/></svg></span>
+            <span>TikTok</span><span class="row__meta mono">@inconnuboytech</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+          <li><a class="row" href="https://t.me/inconnu_boy_tech" target="_blank" rel="noopener">
+            <span class="row__ico"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor"><path d="M21.5 3.5 2.9 10.9c-1.2.5-1.2 1.2-.2 1.5l4.8 1.5 1.8 5.6c.2.6.4.8.9.8.5 0 .7-.2 1-.5l2.4-2.3 4.9 3.6c.9.5 1.5.2 1.8-.8l3.2-15c.4-1.3-.4-1.9-1.4-1.5Zm-3.9 4.2-8.4 7.6-.3 3.2-1.5-4.7 10.2-6.1Z"/></svg></span>
+            <span>Telegram</span><span class="row__meta mono">@inconnu_boy_tech</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
+        </ul>
+
+        <div class="map-card" id="mapCard" data-anim="up">
+          <div class="map-card__frame-wrap">
+            <iframe
+              id="mapIframe"
+              data-src="https://www.google.com/maps?q=-23.4016731,-51.9434669&z=13&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Maringá, Brazil map">
+            </iframe>
+            <div class="map-card__consent" id="mapConsent">
+              <p data-i18n="cookies.mapConsentText">This map is provided by Google Maps and requires third-party cookies to load.</p>
+              <div class="map-card__consent-actions">
+                <button class="btn btn--solid btn--sm" id="mapConsentAccept" data-i18n="cookies.mapConsentAccept">Load the map</button>
+                <a class="link-u mono" href="https://www.google.com/maps?q=-23.4016731,-51.9434669" target="_blank" rel="noopener" data-i18n="cookies.mapConsentOpen">Open in Google Maps</a>
+              </div>
+            </div>
+          </div>
+          <div class="map-card__label mono">
+            <span data-i18n="contact.location">Maringá, Paraná — Brazil</span>
+            <span>23.40° S, 51.94° W</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer__inner mono">
+      <span>© <span id="year"></span> Inconnu boy sensei</span>
+      <span class="footer__mid" data-i18n="footer.made">Designed &amp; built by hand. No templates.</span>
+      <span class="footer__right">
+        <button class="footer__link" id="footerCookieLink" data-i18n="cookies.manage">Cookie settings</button>
+        <a href="#top" class="footer__link" data-i18n="footer.top">Back to top ↑</a>
+      </span>
+    </div>
+  </footer>
+
+  <!-- Custom cursor (fine pointers only) -->
+  <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursorLabel"></span></div>
+
+  <!-- ============ COOKIE CONSENT BANNER ============ -->
+  <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
+    <div class="cookie-banner__inner">
+      <div class="cookie-banner__text">
+        <p class="cookie-banner__title" data-i18n="cookies.title">We value your privacy</p>
+        <p class="cookie-banner__desc" data-i18n="cookies.desc">This site uses essential cookies to remember your preferences (theme, language) and third-party cookies (Google Maps, Google Translate) to power some embedded features. You choose what to allow.</p>
+      </div>
+      <div class="cookie-banner__actions">
+        <button class="btn btn--line btn--sm" id="cookieCustomize" data-i18n="cookies.customize">Customize</button>
+        <button class="btn btn--line btn--sm" id="cookieReject" data-i18n="cookies.reject">Reject non-essential</button>
+        <button class="btn btn--solid btn--sm" id="cookieAcceptAll" data-i18n="cookies.acceptAll">Accept all</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ COOKIE PREFERENCES MODAL ============ -->
+  <div class="cookie-modal" id="cookieModal" hidden>
+    <div class="cookie-modal__backdrop" id="cookieModalBackdrop"></div>
+    <div class="cookie-modal__panel" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
+      <button class="cookie-modal__close" id="cookieModalClose" aria-label="Close">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+      <p class="label" data-i18n="cookies.eyebrow">Privacy</p>
+      <h2 id="cookieModalTitle" class="cookie-modal__title" data-i18n="cookies.modalTitle">Cookie preferences</h2>
+      <p class="cookie-modal__intro" data-i18n="cookies.modalIntro">Choose which cookies this site is allowed to use. Necessary cookies are always active because the site can't function properly without them.</p>
+
+      <div class="cookie-category">
+        <div class="cookie-category__head">
+          <span class="cookie-category__title" data-i18n="cookies.catNecessaryTitle">Necessary</span>
+          <span class="cookie-toggle cookie-toggle--locked">
+            <input type="checkbox" checked disabled id="cookieCatNecessary" />
+            <span class="cookie-toggle__slider"></span>
+          </span>
+        </div>
+        <p class="cookie-category__desc" data-i18n="cookies.catNecessaryDesc">Required for core functionality: theme, language, and remembering your cookie choice. Cannot be disabled.</p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category__head">
+          <span class="cookie-category__title" data-i18n="cookies.catPrefTitle">Preferences</span>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="cookieCatPrefs" checked />
+            <span class="cookie-toggle__slider"></span>
+          </label>
+        </div>
+        <p class="cookie-category__desc" data-i18n="cookies.catPrefDesc">Remembers non-essential display choices to make future visits smoother.</p>
+      </div>
+
+      <div class="cookie-category">
+        <div class="cookie-category__head">
+          <span class="cookie-category__title" data-i18n="cookies.catThirdTitle">Third-party services</span>
+          <label class="cookie-toggle">
+            <input type="checkbox" id="cookieCatThird" checked />
+            <span class="cookie-toggle__slider"></span>
+          </label>
+        </div>
+        <p class="cookie-category__desc" data-i18n="cookies.catThirdDesc">Loads the Google Maps embed and the Google Translate widget. These services may set their own cookies.</p>
+      </div>
+
+      <div class="cookie-modal__actions">
+        <button class="btn btn--line" id="cookieModalReject" data-i18n="cookies.reject">Reject non-essential</button>
+        <button class="btn btn--solid" id="cookieModalSave" data-i18n="cookies.save">Save preferences</button>
+      </div>
+
+      <details class="cookie-policy-full">
+        <summary data-i18n="cookies.policyLink">Full cookie policy</summary>
+        <div class="cookie-policy-full__body" id="cookieFullPolicy" data-i18n="cookies.fullPolicy"></div>
+      </details>
+    </div>
+  </div>
+
+  <script src="i18n.js"></script>
+  <script src="motion.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
