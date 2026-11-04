@@ -1,14 +1,7 @@
-/* ==========================================================
-   INCONNU BOY SENSEI — PORTFOLIO
-   Theme · i18n · GitHub live data · Stack · Timeline · Consent
-   ========================================================== */
-
 const GITHUB_USER = "INCONNU-BOY-SENSEI";
 
-/* Repositories hidden from the portfolio (WhatsApp bots and similar). */
 const REPO_EXCLUDE = /whats\s?app|baileys|wa[-_ ]?bot|\bbot\b|[-_]bot\b|\bbot[-_]|[-_]md\b|\bxmd\b|session[-_ ]?id|pair(ing)?[-_ ]?code/i;
 
-/* ---------- THEME ---------- */
 const root = document.documentElement;
 
 function applyTheme(theme) {
@@ -25,7 +18,6 @@ document.getElementById("themeToggle").addEventListener("click", () => {
   setTimeout(() => root.classList.remove("theme-anim"), 500);
 });
 
-/* ---------- MOBILE NAV ---------- */
 const navToggle = document.getElementById("navToggle");
 const navLinks = document.getElementById("navLinks");
 function setMenu(open) {
@@ -37,7 +29,6 @@ navToggle.addEventListener("click", () => setMenu(!navLinks.classList.contains("
 navLinks.querySelectorAll("a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
 document.addEventListener("keydown", (e) => e.key === "Escape" && setMenu(false));
 
-/* ---------- NAV ACTIVE INDICATOR ---------- */
 const navIndicator = document.getElementById("navIndicator");
 const navAnchors = Array.from(navLinks.querySelectorAll("a"));
 function moveIndicator(a) {
@@ -65,7 +56,6 @@ if ("IntersectionObserver" in window) {
   document.querySelectorAll("main section[id]").forEach((s) => sectionIO.observe(s));
 }
 
-/* ---------- GOOGLE TRANSLATE (consent-gated) ---------- */
 const langToggle = document.getElementById("langToggle");
 const langWrap = document.querySelector(".lang-wrap");
 langToggle.addEventListener("click", (e) => {
@@ -92,7 +82,6 @@ function loadGoogleTranslate() {
   document.body.appendChild(s);
 }
 
-/* ---------- i18n ---------- */
 const translations = window.TRANSLATIONS;
 function detectLang() {
   const short = (navigator.language || "en").toLowerCase().split("-")[0];
@@ -108,7 +97,6 @@ document.querySelectorAll("[data-i18n]").forEach((el) => {
 });
 root.lang = LANG;
 
-/* ---------- STACK (marquee) ---------- */
 const skills = [
   { name: "JavaScript", icon: "devicon-javascript-plain" },
   { name: "TypeScript", icon: "devicon-typescript-plain" },
@@ -129,7 +117,6 @@ const skillHTML = (list) =>
 Motion.initMarquee(document.querySelector('[data-marquee="1"]'), skillHTML(skills.slice(0, half)));
 Motion.initMarquee(document.querySelector('[data-marquee="-1"]'), skillHTML(skills.slice(half)));
 
-/* ---------- TIMELINE ---------- */
 const timeline = document.getElementById("timeline");
 timeline.insertAdjacentHTML(
   "beforeend",
@@ -148,7 +135,6 @@ timeline.insertAdjacentHTML(
     .join("")
 );
 
-/* ---------- LOCAL TIME (Maringá) ---------- */
 const liveClock = document.getElementById("liveClock");
 function updateClock() {
   try {
@@ -164,10 +150,8 @@ setInterval(updateClock, 15000);
 
 document.getElementById("year").textContent = new Date().getFullYear();
 
-/* ---------- MOTION ---------- */
 Motion.init();
 
-/* ---------- GITHUB ---------- */
 const LANG_ICON = {
   JavaScript: "devicon-javascript-plain", TypeScript: "devicon-typescript-plain",
   HTML: "devicon-html5-plain", CSS: "devicon-css3-plain", Python: "devicon-python-plain",
@@ -184,7 +168,10 @@ function escapeHtml(str) {
   return div.innerHTML;
 }
 
+const REPO_PINNED = ["skyhost"];
+
 function isExcluded(r) {
+  if (REPO_PINNED.includes(r.name.toLowerCase())) return false;
   const hay = [r.name, r.description || "", ...(r.topics || [])].join(" ");
   return REPO_EXCLUDE.test(hay);
 }
@@ -212,7 +199,7 @@ async function loadGitHub() {
     document.getElementById("statLang").textContent = topLang;
 
     const top = own
-      .sort((a, b) => b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at))
+      .sort((a, b) => (REPO_PINNED.includes(b.name.toLowerCase()) - REPO_PINNED.includes(a.name.toLowerCase())) || b.stargazers_count - a.stargazers_count || new Date(b.pushed_at) - new Date(a.pushed_at))
       .slice(0, 6);
 
     if (!top.length) {
@@ -248,12 +235,6 @@ async function loadGitHub() {
 }
 loadGitHub();
 
-/* ==========================================================
-   COOKIE CONSENT
-   Bannière + modal de préférences + politique complète (FR/EN/PT).
-   Catégories : necessary (toujours actif), preferences, thirdparty
-   (Google Maps + Google Translate, chargés uniquement si acceptés).
-   ========================================================== */
 const COOKIE_KEY = "cookie_consent_v1";
 
 function readConsent() {

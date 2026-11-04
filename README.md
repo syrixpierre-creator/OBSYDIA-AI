@@ -7,7 +7,7 @@ Site statique, sans framework ni dépendance JS : HTML, CSS et JavaScript écrit
 - `styles.css` — design system (tokens, grille 12 colonnes, dark/light, responsive, reduced-motion)
 - `motion.js` — moteur d'animation maison : intro, split-text, reveals au scroll, marquee sensible à la vitesse de scroll, boutons magnétiques, curseur, compteurs
 - `i18n.js` — traductions EN / FR / PT (détection automatique selon la langue du navigateur)
-- `script.js` — thème, navigation, données GitHub en direct (dépôts de bots WhatsApp filtrés), consentement cookies
+- `script.js` — thème, navigation, données GitHub en direct (SKYHOST épinglé en premier, dépôts de bots WhatsApp filtrés), consentement cookies
 - `manifest.json`, `robots.txt`, `sitemap.xml` — SEO / PWA
 
 ## Liens

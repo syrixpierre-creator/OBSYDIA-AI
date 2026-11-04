@@ -1,12 +1,3 @@
-/* ==========================================================
-   MOTION — a small, dependency-free motion system
-   ----------------------------------------------------------
-   · One rAF loop drives every scroll-linked effect
-   · Text split into chars / masked lines, revealed on view
-   · Magnetic buttons, lerped cursor, pointer spotlight
-   · Velocity-aware marquee
-   · Fully disabled under prefers-reduced-motion
-   ========================================================== */
 (function () {
   "use strict";
 
@@ -19,9 +10,6 @@
   const easeOutExpo = (t) => (t === 1 ? 1 : 1 - Math.pow(2, -10 * t));
   const easeInOutQuart = (t) => (t < 0.5 ? 8 * t * t * t * t : 1 - Math.pow(-2 * t + 2, 4) / 2);
 
-  /* ---------- TEXT SPLITTING ---------- */
-
-  // Wrap every character of a node tree in .char spans, keeping inline elements (<em>…).
   function splitChars(el) {
     let i = 0;
     const walk = (node) => {
@@ -53,7 +41,6 @@
     return i;
   }
 
-  // Wrap words in masks; line index is computed from layout so each visual line rises together.
   function splitWords(el) {
     if (el.dataset.splitDone) return;
     el.dataset.splitDone = "1";
@@ -106,8 +93,6 @@
     });
   }
 
-  /* ---------- INTRO ---------- */
-
   function runIntro(done) {
     const intro = document.getElementById("intro");
     const count = document.getElementById("introCount");
@@ -141,8 +126,6 @@
     requestAnimationFrame(tick);
   }
 
-  /* ---------- REVEAL ON VIEW ---------- */
-
   let io;
   function observe(scope = document) {
     const els = scope.querySelectorAll("[data-anim]:not(.in-view)");
@@ -173,8 +156,6 @@
     });
   }
 
-  /* ---------- MAGNETIC ---------- */
-
   function magnetic(el) {
     if (!finePointer || reduced) return;
     const strength = 0.28;
@@ -192,8 +173,6 @@
     });
   }
 
-  /* ---------- SPOTLIGHT ---------- */
-
   function spotlight(el) {
     if (!finePointer) return;
     el.addEventListener("pointermove", (e) => {
@@ -202,8 +181,6 @@
       el.style.setProperty("--my", `${e.clientY - r.top}px`);
     });
   }
-
-  /* ---------- CURSOR ---------- */
 
   const cursor = { x: -100, y: -100, tx: -100, ty: -100, el: null, label: null, active: false };
   function initCursor() {
@@ -242,8 +219,6 @@
     document.addEventListener("pointerup", () => cursor.el.classList.remove("is-down"));
   }
 
-  /* ---------- MARQUEE ---------- */
-
   const marquees = [];
   function initMarquee(el, html) {
     const track = el.querySelector(".marquee__track");
@@ -254,8 +229,6 @@
   function measureMarquees() {
     marquees.forEach((m) => (m.width = m.track.firstElementChild.offsetWidth));
   }
-
-  /* ---------- MAIN LOOP ---------- */
 
   const state = { y: window.scrollY, lastY: window.scrollY, velocity: 0, navHidden: false };
   const els = {};
@@ -280,7 +253,6 @@
 
     if (els.progress) els.progress.style.transform = `scaleX(${max > 0 ? state.y / max : 0})`;
 
-    // Nav: hide on scroll down, reveal on scroll up.
     if (els.nav) {
       els.nav.classList.toggle("is-scrolled", state.y > 24);
       if (Math.abs(delta) > 2) {
@@ -293,14 +265,12 @@
     }
 
     if (!reduced) {
-      // Hero: title drifts and fades as it scrolls away.
       if (els.heroTitle && state.y < vh * 1.2) {
         const p = clamp(state.y / vh, 0, 1);
         els.heroTitle.style.transform = `translate3d(0, ${p * 18}vh, 0)`;
         els.heroTitle.style.opacity = String(1 - p * 0.9);
       }
 
-      // Marquees: constant drift + scroll velocity.
       marquees.forEach((m) => {
         if (!m.width) return;
         const speed = 0.5 + Math.min(Math.abs(state.velocity) * 0.35, 14);
@@ -311,7 +281,6 @@
         m.track.style.transform = `translate3d(${m.x}px,0,0) skewX(${skew}deg)`;
       });
 
-      // Cursor easing.
       if (cursor.active) {
         cursor.x = lerp(cursor.x, cursor.tx, 0.2);
         cursor.y = lerp(cursor.y, cursor.ty, 0.2);
@@ -319,7 +288,6 @@
       }
     }
 
-    // Timeline rail fills with scroll.
     if (els.timeline && els.timelineFill) {
       const r = els.timeline.getBoundingClientRect();
       const p = clamp((vh * 0.65 - r.top) / r.height, 0, 1);
@@ -332,8 +300,6 @@
 
     requestAnimationFrame(loop);
   }
-
-  /* ---------- COUNTERS ---------- */
 
   function countUp(el, value, duration = 1400) {
     const n = Number(value);
@@ -350,7 +316,6 @@
     requestAnimationFrame(step);
   }
 
-  // Start a counter only once the element is on screen.
   function countWhenVisible(el, value) {
     if (!("IntersectionObserver" in window)) return countUp(el, value);
     const o = new IntersectionObserver((entries) => {
@@ -361,8 +326,6 @@
     }, { threshold: 0.6 });
     o.observe(el);
   }
-
-  /* ---------- PUBLIC API ---------- */
 
   let resizeT;
   window.addEventListener("resize", () => {
@@ -387,7 +350,6 @@
       requestAnimationFrame(loop);
       const start = () => observe();
       if (document.fonts && document.fonts.ready) {
-        // Split lines after webfonts load so line breaks are measured correctly.
         Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() =>
           runIntro(start)
         );

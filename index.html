@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- ============ SEO ============ -->
   <title>Inconnu boy sensei (Dawens) — Open Source Full Stack Developer · CEO of SYRIX VISION COMPANY</title>
   <meta name="description" content="Inconnu boy sensei (Dawens) — Open Source Full Stack Developer based in Maringá, Brazil. CEO &amp; Co-Founder of SYRIX VISION COMPANY. Open to collaborations, partnerships and new roles." />
   <meta name="author" content="Dawens (Inconnu boy sensei)" />
@@ -60,7 +59,6 @@
 
   <meta name="google-site-verification" content="dbHowz5g7HJfTHX1sXCPnlLwbWi762Ql1S2ObAoim_E" />
 
-  <!-- Theme + JS flag before paint (avoids flash) -->
   <script>
     (function () {
       var d = document.documentElement;
@@ -83,7 +81,6 @@
 </head>
 <body>
 
-  <!-- ============ INTRO ============ -->
   <div class="intro" id="intro" aria-hidden="true">
     <div class="intro__row">
       <span class="intro__name">Inconnu boy sensei</span>
@@ -94,7 +91,6 @@
 
   <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
 
-  <!-- ============ NAV ============ -->
   <header class="nav" id="nav">
     <div class="nav__inner">
       <a href="#top" class="nav__brand" aria-label="Inconnu boy sensei — home">
@@ -129,7 +125,6 @@
   </header>
 
   <main>
-    <!-- ============ HERO ============ -->
     <section class="hero" id="top">
       <div class="hero__inner wrap">
         <div class="hero__top">
@@ -172,7 +167,6 @@
       </div>
     </section>
 
-    <!-- ============ ABOUT ============ -->
     <section class="section" id="about">
       <div class="wrap grid">
         <header class="section__head">
@@ -182,14 +176,13 @@
         <div class="section__body">
           <h2 class="statement" data-anim="words" data-i18n="about.title">I build tools people keep using — clean APIs, honest interfaces, and code that still reads well six months later.</h2>
           <div class="about__cols">
-            <p data-anim="up" data-i18n="about.p1">I'm Dawens, known online as Inconnu boy sensei — an open source full stack developer based in Maringá, Brazil. Most of my work lives in the open on GitHub, where I build web and Android apps and collaborate with other developers.</p>
+            <p data-anim="up" data-i18n="about.p1">I'm Dawens, known online as Inconnu boy sensei — an open source full stack developer based in Maringá, Brazil. Most of my work lives in the open on GitHub, where I build web and Android apps — including SKYHOST, a hosting platform — and collaborate with other developers.</p>
             <p data-anim="up" data-i18n="about.p2">I'm also the CEO &amp; co-founder of SYRIX VISION COMPANY, a small team shipping open source software together. I publish tutorials and build logs on YouTube and TikTok.</p>
           </div>
         </div>
       </div>
     </section>
 
-    <!-- ============ WORK ============ -->
     <section class="section" id="work">
       <div class="wrap grid">
         <header class="section__head">
@@ -199,7 +192,37 @@
         <div class="section__body">
           <h2 class="title" data-anim="lines" data-i18n="projects.title">Built in the open.</h2>
 
-          <a class="feature" href="https://inconnu.zone.id" target="_blank" rel="noopener" data-anim="clip" data-cursor="Open">
+          <article class="feature feature--sky" data-anim="clip">
+            <div class="feature__visual feature__visual--term" aria-hidden="true">
+              <div class="term">
+                <div class="term__bar"><i></i><i></i><i></i><span class="mono">~/my-app</span></div>
+                <div class="term__body mono">
+                  <p class="term__line" style="--d:0"><span class="term__p">$</span> skyhost init</p>
+                  <p class="term__line term__dim" style="--d:1">Packaging 42 files (118 KB)…</p>
+                  <p class="term__line" style="--d:2"><span class="term__ok">✓</span> Created my-app and linked this directory</p>
+                  <p class="term__line term__dim" style="--d:3">→ SmartDeploy: Next.js 15 · pnpm</p>
+                  <p class="term__line term__dim" style="--d:4">→ Building… <span class="term__ok">✓</span> compiled successfully</p>
+                  <p class="term__line term__dim" style="--d:5">→ Health check: GET / → 200 <span class="term__ok">✓</span></p>
+                  <p class="term__line term__live" style="--d:6"><span class="term__ok">✓</span> Live at <span class="term__url">https://my-app.skyhost.tech</span><span class="term__caret"></span></p>
+                </div>
+              </div>
+            </div>
+            <div class="feature__body">
+              <p class="feature__badge mono" data-i18n="sky.badge">Flagship — PaaS by SYRIX VISION</p>
+              <h3 class="feature__title feature__title--xl">SKYHOST</h3>
+              <p class="feature__lead" data-i18n="sky.lead">Push your code. Get a live URL.</p>
+              <p class="feature__desc" data-i18n="sky.desc">A hosting platform for web apps, APIs, workers, cron jobs and databases. Connect a repo or drop a ZIP — SKYHOST detects the stack, builds it, runs it in an isolated sandbox and serves it over HTTPS. Every push redeploys.</p>
+              <ul class="chips mono">
+                <li>SmartDeploy</li><li data-i18n="sky.c2">Zero-downtime releases</li><li data-i18n="sky.c3">Managed databases</li><li>CLI · REST API</li><li data-i18n="sky.c5">gVisor sandboxes</li>
+              </ul>
+              <div class="feature__links">
+                <a class="feature__link mono link-u" href="https://skyhost.tech" target="_blank" rel="noopener" data-cursor="Visit">skyhost.tech <span aria-hidden="true">↗</span></a>
+                <a class="feature__link mono link-u" href="https://github.com/INCONNU-BOY-SENSEI/skyhost" target="_blank" rel="noopener" data-cursor="GitHub">GitHub <span aria-hidden="true">↗</span></a>
+              </div>
+            </div>
+          </article>
+
+          <a class="feature feature--apk" href="https://inconnu.zone.id" target="_blank" rel="noopener" data-anim="clip" data-cursor="Open">
             <div class="feature__visual" aria-hidden="true">
               <div class="apk">
                 <div class="apk__file">
@@ -216,7 +239,7 @@
               </div>
             </div>
             <div class="feature__body">
-              <p class="feature__badge mono" data-i18n="projects.featuredBadge">Featured — Live</p>
+              <p class="feature__badge mono" data-i18n="projects.featuredBadge">Tool — Live</p>
               <h3 class="feature__title" data-i18n="projects.featuredTitle">Web &amp; HTML to APK</h3>
               <p class="feature__desc" data-i18n="projects.featuredDesc">Converts websites and HTML projects directly into installable Android APKs — no Android Studio required.</p>
               <span class="feature__link mono">inconnu.zone.id <span aria-hidden="true">↗</span></span>
@@ -243,7 +266,6 @@
       </div>
     </section>
 
-    <!-- ============ STACK ============ -->
     <section class="section section--flush" id="stack">
       <div class="wrap grid">
         <header class="section__head">
@@ -258,7 +280,6 @@
       <div class="marquee marquee--outline" data-marquee="-1" aria-hidden="true"><div class="marquee__track" id="marqueeB"></div></div>
     </section>
 
-    <!-- ============ EXPERIENCE ============ -->
     <section class="section" id="experience">
       <div class="wrap grid">
         <header class="section__head">
@@ -274,7 +295,6 @@
       </div>
     </section>
 
-    <!-- ============ SYRIX ============ -->
     <section class="section section--invert" id="syrix">
       <div class="wrap grid">
         <header class="section__head">
@@ -285,6 +305,7 @@
           <h2 class="syrix__title" data-anim="lines">SYRIX<br />VISION<em>.</em></h2>
           <p class="syrix__text" data-anim="up" data-i18n="syrix.text">A small team building open source software and independent tools — founded and led by Inconnu boy sensei, CEO &amp; Co-Founder. We ship what we'd want to use ourselves.</p>
           <ul class="rows" data-anim="stagger">
+            <li><a href="https://skyhost.tech" target="_blank" rel="noopener" class="row"><span>SKYHOST</span><span class="row__meta mono">skyhost.tech</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
             <li><a href="https://github.com/SYRIX-COMPANY" target="_blank" rel="noopener" class="row"><span>GitHub</span><span class="row__meta mono">SYRIX-COMPANY</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
             <li><a href="https://www.instagram.com/syrixcompany" target="_blank" rel="noopener" class="row"><span>Instagram</span><span class="row__meta mono">@syrixcompany</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
             <li><a href="mailto:syrixcompany@gmail.com" class="row"><span>Email</span><span class="row__meta mono">syrixcompany@gmail.com</span><span class="row__arrow" aria-hidden="true">↗</span></a></li>
@@ -293,7 +314,6 @@
       </div>
     </section>
 
-    <!-- ============ OPEN TO ============ -->
     <section class="section" id="open">
       <div class="wrap grid">
         <header class="section__head">
@@ -326,7 +346,6 @@
       </div>
     </section>
 
-    <!-- ============ CONTACT ============ -->
     <section class="contact" id="contact">
       <div class="wrap">
         <p class="contact__kicker mono"><span class="index">07</span> <span data-i18n="contact.eyebrow">Contact</span></p>
@@ -391,10 +410,8 @@
     </div>
   </footer>
 
-  <!-- Custom cursor (fine pointers only) -->
   <div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label" id="cursorLabel"></span></div>
 
-  <!-- ============ COOKIE CONSENT BANNER ============ -->
   <div class="cookie-banner" id="cookieBanner" role="dialog" aria-live="polite" aria-label="Cookie consent" hidden>
     <div class="cookie-banner__inner">
       <div class="cookie-banner__text">
@@ -409,7 +426,6 @@
     </div>
   </div>
 
-  <!-- ============ COOKIE PREFERENCES MODAL ============ -->
   <div class="cookie-modal" id="cookieModal" hidden>
     <div class="cookie-modal__backdrop" id="cookieModalBackdrop"></div>
     <div class="cookie-modal__panel" role="dialog" aria-modal="true" aria-labelledby="cookieModalTitle">
