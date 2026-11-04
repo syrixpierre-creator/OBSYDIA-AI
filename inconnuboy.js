@@ -109,10 +109,133 @@
     return { lines: line + 1, count: w };
   }
 
+  const sound = {
+    ctx: null,
+    master: null,
+    noise: null,
+    muted: false,
+    start() {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return;
+      if (!this.ctx) {
+        this.ctx = new Ctx();
+        this.master = this.ctx.createGain();
+        this.master.gain.value = 0.55;
+        this.master.connect(this.ctx.destination);
+        const len = Math.floor(this.ctx.sampleRate * 0.08);
+        this.noise = this.ctx.createBuffer(1, len, this.ctx.sampleRate);
+        const data = this.noise.getChannelData(0);
+        for (let i = 0; i < len; i++) data[i] = Math.random() * 2 - 1;
+      }
+      if (this.ctx.state === "suspended") this.ctx.resume();
+    },
+    ready() {
+      return this.ctx && !this.muted && this.ctx.state === "running";
+    },
+    env(gain, t, peak, decay) {
+      gain.gain.setValueAtTime(0.0001, t);
+      gain.gain.exponentialRampToValueAtTime(peak, t + 0.003);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t + decay);
+    },
+    key(strength = 1) {
+      if (!this.ready()) return;
+      const c = this.ctx;
+      const t = c.currentTime;
+      const src = c.createBufferSource();
+      src.buffer = this.noise;
+      src.playbackRate.value = 0.9 + Math.random() * 0.25;
+      const bp = c.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.frequency.value = 2200 + Math.random() * 1800;
+      bp.Q.value = 1.2;
+      const g = c.createGain();
+      this.env(g, t, 0.32 * strength, 0.04);
+      src.connect(bp).connect(g).connect(this.master);
+      src.start(t);
+      src.stop(t + 0.08);
+      const o = c.createOscillator();
+      o.type = "triangle";
+      o.frequency.setValueAtTime(170 + Math.random() * 50, t);
+      o.frequency.exponentialRampToValueAtTime(55, t + 0.06);
+      const g2 = c.createGain();
+      this.env(g2, t, 0.16 * strength, 0.07);
+      o.connect(g2).connect(this.master);
+      o.start(t);
+      o.stop(t + 0.1);
+    },
+    enter() {
+      this.key(1.7);
+      setTimeout(() => this.key(0.6), 45);
+    },
+    blip() {
+      if (!this.ready()) return;
+      const c = this.ctx;
+      const t = c.currentTime;
+      const o = c.createOscillator();
+      o.type = "square";
+      o.frequency.value = 1400 + Math.random() * 500;
+      const lp = c.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.value = 3000;
+      const g = c.createGain();
+      this.env(g, t, 0.025, 0.03);
+      o.connect(lp).connect(g).connect(this.master);
+      o.start(t);
+      o.stop(t + 0.05);
+    },
+    chime() {
+      if (!this.ready()) return;
+      const c = this.ctx;
+      const t0 = c.currentTime;
+      const lp = c.createBiquadFilter();
+      lp.type = "lowpass";
+      lp.frequency.setValueAtTime(900, t0);
+      lp.frequency.exponentialRampToValueAtTime(4200, t0 + 0.8);
+      lp.connect(this.master);
+      [261.63, 392.0, 523.25, 659.25, 987.77].forEach((f, i) => {
+        const t = t0 + i * 0.07;
+        [-4, 4].forEach((detune) => {
+          const o = c.createOscillator();
+          o.type = i === 0 ? "sine" : "triangle";
+          o.frequency.value = f;
+          o.detune.value = detune;
+          const g = c.createGain();
+          g.gain.setValueAtTime(0.0001, t);
+          g.gain.exponentialRampToValueAtTime(i === 0 ? 0.09 : 0.045, t + 0.04);
+          g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
+          o.connect(g).connect(lp);
+          o.start(t);
+          o.stop(t + 2.3);
+        });
+      });
+    },
+    whoosh() {
+      if (!this.ready()) return;
+      const c = this.ctx;
+      const t = c.currentTime;
+      const src = c.createBufferSource();
+      const len = Math.floor(c.sampleRate * 1.2);
+      const buf = c.createBuffer(1, len, c.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < len; i++) d[i] = Math.random() * 2 - 1;
+      src.buffer = buf;
+      const bp = c.createBiquadFilter();
+      bp.type = "bandpass";
+      bp.Q.value = 0.8;
+      bp.frequency.setValueAtTime(300, t);
+      bp.frequency.exponentialRampToValueAtTime(3200, t + 0.9);
+      const g = c.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.12, t + 0.35);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + 1.1);
+      src.connect(bp).connect(g).connect(this.master);
+      src.start(t);
+      src.stop(t + 1.2);
+    },
+  };
+
   function runIntro(done) {
     const intro = document.getElementById("intro");
-    const count = document.getElementById("introCount");
-    const bar = document.getElementById("introBar");
     let seen = false;
     try { seen = !!sessionStorage.getItem("intro_seen"); } catch (e) {}
 
@@ -123,23 +246,145 @@
       return;
     }
 
-    const duration = 1300;
-    const start = performance.now();
-    const tick = (now) => {
-      const t = clamp((now - start) / duration, 0, 1);
-      const v = Math.round(easeInOutQuart(t) * 100);
-      count.textContent = String(v).padStart(3, "0");
-      bar.style.transform = `scaleX(${v / 100})`;
-      if (t < 1) return requestAnimationFrame(tick);
-      setTimeout(() => {
-        intro.classList.add("is-out");
-        root.classList.add("is-loaded");
-        try { sessionStorage.setItem("intro_seen", "1"); } catch (e) {}
-        done();
-        setTimeout(() => intro.remove(), 1200);
-      }, 180);
+    root.classList.add("intro-on");
+    const $ = (id) => document.getElementById(id);
+    const gate = $("introGate");
+    const log = $("introLog");
+    const name = $("introName");
+    const nameText = $("introNameText");
+    const welcome = $("introWelcome");
+    const sub = $("introSub");
+    const line = $("introLine");
+    const muteBtn = $("introMute");
+    let finished = false;
+    let started = false;
+
+    const wait = (ms) => new Promise((r) => setTimeout(r, ms));
+    const humanDelay = (ch) => (ch === " " ? 110 + Math.random() * 90 : 45 + Math.random() * 85);
+
+    const finish = () => {
+      if (finished) return;
+      finished = true;
+      window.removeEventListener("keydown", onKey);
+      sound.whoosh();
+      intro.classList.add("is-out");
+      root.classList.remove("intro-on");
+      root.classList.add("is-loaded");
+      try { sessionStorage.setItem("intro_seen", "1"); } catch (e) {}
+      done();
+      setTimeout(() => intro.remove(), 1300);
     };
-    requestAnimationFrame(tick);
+
+    async function type(el, text, opts = {}) {
+      for (const ch of text) {
+        if (finished) return;
+        el.append(ch);
+        if (ch !== " ") sound.key(opts.strength || 1);
+        await wait(opts.fast ? 22 + Math.random() * 25 : humanDelay(ch));
+      }
+    }
+
+    function logLine(html) {
+      const p = document.createElement("p");
+      p.innerHTML = html;
+      log.appendChild(p);
+      return p;
+    }
+
+    async function command(cmd) {
+      const p = logLine('<span class="p">guest@inconnuboy</span> <span class="hi">~ %</span> ');
+      const cmdSpan = document.createElement("span");
+      cmdSpan.className = "hi";
+      p.appendChild(cmdSpan);
+      await type(cmdSpan, cmd);
+      await wait(220);
+      sound.enter();
+      await wait(160);
+    }
+
+    async function output(lines) {
+      for (const l of lines) {
+        if (finished) return;
+        logLine(l);
+        sound.blip();
+        await wait(90 + Math.random() * 90);
+      }
+    }
+
+    async function progress() {
+      const p = logLine("");
+      const total = window.innerWidth < 600 ? 12 : 24;
+      for (let i = 0; i <= total; i++) {
+        if (finished) return;
+        p.textContent = `fetching assets  [${"█".repeat(i)}${"·".repeat(total - i)}] ${String(Math.round((i / total) * 100)).padStart(3, " ")}%`;
+        if (i % 3 === 0) sound.blip();
+        await wait(28);
+      }
+      p.innerHTML += ' <span class="ok">done</span>';
+    }
+
+    async function sequence() {
+      await wait(250);
+      await command("ssh guest@inconnuboy.dev");
+      await output([
+        "connecting to inconnuboy.dev:22 …",
+        '<span class="ok">✓</span> secure channel established',
+        "Maringá, BR · " + new Date().toUTCString().slice(17, 22) + " UTC",
+      ]);
+      await progress();
+      await wait(200);
+      await command("whoami");
+      if (finished) return;
+      await wait(150);
+      name.classList.add("is-typing");
+      await type(nameText, "Inconnu boy sensei", { strength: 1.15 });
+      name.classList.remove("is-typing");
+      await wait(650);
+      if (finished) return;
+      sound.enter();
+      name.classList.add("is-gone");
+      await wait(350);
+      welcome.innerHTML = "Welcome."
+        .split("")
+        .map((c, i) => `<span class="c${c === "." ? " c--dot" : ""}" style="--i:${i}">${c}</span>`)
+        .join("");
+      void welcome.offsetWidth;
+      welcome.classList.add("is-in");
+      sub.classList.add("is-in");
+      line.classList.add("is-in");
+      sound.chime();
+      await wait(1900);
+      finish();
+    }
+
+    function boot() {
+      if (started) return;
+      started = true;
+      sound.start();
+      gate.classList.add("is-gone");
+      setTimeout(() => gate.remove(), 600);
+      sequence();
+    }
+
+    function onKey(e) {
+      if (e.key === "Escape") return finish();
+      if (!started) boot();
+    }
+
+    gate.addEventListener("click", boot);
+    window.addEventListener("keydown", onKey);
+    $("introSkip").addEventListener("click", (e) => {
+      e.stopPropagation();
+      finish();
+    });
+    muteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      sound.muted = !sound.muted;
+      muteBtn.textContent = sound.muted ? "sound: off" : "sound: on";
+      muteBtn.setAttribute("aria-pressed", String(sound.muted));
+      if (!started) boot();
+    });
+    gate.focus({ preventScroll: true });
   }
 
   let io;

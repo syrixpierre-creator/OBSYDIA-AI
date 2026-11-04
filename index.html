@@ -81,12 +81,26 @@
 </head>
 <body>
 
-  <div class="intro notranslate" id="intro" aria-hidden="true" translate="no">
-    <div class="intro__row">
-      <span class="intro__name">Inconnu boy sensei</span>
-      <span class="intro__count"><span id="introCount">000</span></span>
+  <div class="intro notranslate" id="intro" translate="no" role="dialog" aria-label="Intro">
+    <div class="intro__top">
+      <span class="intro__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="intro__path">guest@inconnuboy — zsh — 80×24</span>
+      <span class="intro__actions">
+        <button class="intro__btn" id="introMute" aria-pressed="false">sound: on</button>
+        <button class="intro__btn" id="introSkip">skip →</button>
+      </span>
     </div>
-    <div class="intro__bar"><span id="introBar"></span></div>
+    <div class="intro__log" id="introLog" aria-hidden="true"></div>
+    <div class="intro__stage" aria-hidden="true">
+      <p class="intro__name" id="introName"><span id="introNameText"></span><span class="intro__caret"></span></p>
+      <p class="intro__welcome" id="introWelcome"></p>
+      <p class="intro__sub" id="introSub">to the portfolio of Inconnu boy sensei</p>
+    </div>
+    <span class="intro__line" id="introLine" aria-hidden="true"></span>
+    <button class="intro__gate" id="introGate">
+      <span class="intro__gate-line">press any key to boot<span class="intro__caret"></span></span>
+      <span class="intro__gate-hint">sound on · or tap anywhere</span>
+    </button>
   </div>
 
   <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
