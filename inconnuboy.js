@@ -113,7 +113,12 @@
     ctx: null,
     master: null,
     noise: null,
-    muted: false,
+    muted: (() => { try { return localStorage.getItem("sound") === "off"; } catch (e) { return false; } })(),
+    setMuted(v) {
+      this.muted = v;
+      try { localStorage.setItem("sound", v ? "off" : "on"); } catch (e) {}
+      document.dispatchEvent(new CustomEvent("soundchange"));
+    },
     start() {
       const Ctx = window.AudioContext || window.webkitAudioContext;
       if (!Ctx) return;
@@ -371,6 +376,12 @@
       if (!started) boot();
     }
 
+    const syncMute = () => {
+      muteBtn.textContent = sound.muted ? "sound: off" : "sound: on";
+      muteBtn.setAttribute("aria-pressed", String(sound.muted));
+    };
+    syncMute();
+    document.addEventListener("soundchange", syncMute);
     gate.addEventListener("click", boot);
     window.addEventListener("keydown", onKey);
     $("introSkip").addEventListener("click", (e) => {
@@ -379,17 +390,126 @@
     });
     muteBtn.addEventListener("click", (e) => {
       e.stopPropagation();
-      sound.muted = !sound.muted;
-      muteBtn.textContent = sound.muted ? "sound: off" : "sound: on";
-      muteBtn.setAttribute("aria-pressed", String(sound.muted));
+      sound.setMuted(!sound.muted);
       if (!started) boot();
     });
     gate.focus({ preventScroll: true });
   }
 
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+  function initSoundToggle() {
+    const unlock = () => {
+      if (!sound.muted) sound.start();
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    const btn = document.getElementById("soundToggle");
+    if (!btn) return;
+    const sync = () => {
+      btn.classList.toggle("is-muted", sound.muted);
+      btn.setAttribute("aria-pressed", String(!sound.muted));
+    };
+    sync();
+    document.addEventListener("soundchange", sync);
+    btn.addEventListener("click", () => {
+      sound.start();
+      sound.setMuted(!sound.muted);
+      if (!sound.muted) sound.key(0.8);
+    });
+  }
+
+  async function typeHero() {
+    const title = document.getElementById("heroTitle");
+    if (!title) return;
+    const chars = Array.from(title.querySelectorAll(".char"));
+    if (reduced) {
+      chars.forEach((c) => c.classList.add("on"));
+      return;
+    }
+    const caret = document.createElement("span");
+    caret.className = "hero-caret is-typing";
+    caret.setAttribute("aria-hidden", "true");
+    chars[0].before(caret);
+    await sleep(250);
+    for (const c of chars) {
+      c.classList.add("on");
+      c.after(caret);
+      sound.key(0.9);
+      const next = c.nextSibling;
+      const pause = next && next.nodeType === 3 ? 160 : 0;
+      await sleep(55 + Math.random() * 75 + pause);
+    }
+    caret.classList.remove("is-typing");
+    await sleep(200);
+  }
+
+  async function typeCommand(head) {
+    const label = head.querySelector(".label");
+    if (!label) return head.classList.add("in-view");
+    const nodes = [];
+    const walker = document.createTreeWalker(label, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    const targets = nodes.map((n) => n.data);
+    nodes.forEach((n) => (n.data = ""));
+    const caret = document.createElement("span");
+    caret.className = "type-caret";
+    caret.setAttribute("aria-hidden", "true");
+    label.append(caret);
+    head.classList.add("in-view");
+    await sleep(120);
+    for (let k = 0; k < nodes.length; k++) {
+      for (const ch of targets[k]) {
+        nodes[k].data += ch;
+        if (ch !== " ") sound.key(0.3);
+        await sleep(35 + Math.random() * 45);
+      }
+    }
+    await sleep(900);
+    caret.remove();
+  }
+
+  const GLYPHS = "!<>-_\\/[]{}=+*^?#%&$@ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+  function decode(el) {
+    const nodes = [];
+    const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    const targets = nodes.map((n) => n.data);
+    let offset = 0;
+    const plan = targets.map((t) =>
+      Array.from(t).map((ch) => {
+        const i = offset++;
+        return { ch, at: i * 22 + Math.random() * 380 };
+      })
+    );
+    const total = Math.max(0, ...plan.flat().map((p) => p.at)) + 120;
+    el.classList.add("in-view", "decoding");
+    const start = performance.now();
+    let lastSound = 0;
+    const frame = (now) => {
+      const t = now - start;
+      plan.forEach((chars, k) => {
+        nodes[k].data = chars
+          .map((p) => (t >= p.at || p.ch === " " ? p.ch : GLYPHS[(Math.random() * GLYPHS.length) | 0]))
+          .join("");
+      });
+      if (now - lastSound > 70) {
+        sound.blip();
+        lastSound = now;
+      }
+      if (t < total) return requestAnimationFrame(frame);
+      nodes.forEach((n, k) => (n.data = targets[k]));
+      el.classList.remove("decoding");
+    };
+    requestAnimationFrame(frame);
+  }
+
   let io;
-  function observe(scope = document) {
-    const els = scope.querySelectorAll("[data-anim]:not(.in-view)");
+  function observe(scope = document, skipHero = false) {
+    let els = Array.from(scope.querySelectorAll("[data-anim]:not(.in-view)"));
+    if (skipHero) els = els.filter((el) => !el.closest(".hero"));
     if (reduced || !("IntersectionObserver" in window)) {
       els.forEach((el) => el.classList.add("in-view", "is-split"));
       return;
@@ -402,6 +522,8 @@
             io.unobserve(e.target);
             const kind = e.target.dataset.anim;
             if (kind === "words" || kind === "lines") revealText(e.target);
+            else if (kind === "decode") decode(e.target);
+            else if (kind === "cmd") typeCommand(e.target);
             else e.target.classList.add("in-view");
           });
         },
@@ -607,8 +729,12 @@
       document.querySelectorAll("[data-magnetic]").forEach(magnetic);
       document.querySelectorAll("[data-spot]").forEach(spotlight);
       initCursor();
+      initSoundToggle();
       requestAnimationFrame(loop);
-      const start = () => observe();
+      const start = () => {
+        observe(document, true);
+        typeHero().then(() => observe(document.querySelector(".hero")));
+      };
       if (document.fonts && document.fonts.ready) {
         Promise.race([document.fonts.ready, new Promise((r) => setTimeout(r, 1500))]).then(() =>
           runIntro(start)

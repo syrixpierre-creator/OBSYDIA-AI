@@ -310,13 +310,14 @@ body { top: 0 !important; }
 .hero__title .line--indent { padding-left: 14vw; }
 .hero__title em { letter-spacing: -0.03em; padding-right: 0.04em; }
 .hero__title .line__in { display: block; white-space: nowrap; }
-.char { display: inline-block; will-change: transform; }
-html.js .hero__title .char {
-  transform: translate3d(0, 105%, 0) rotate(4deg);
-  transition: transform 1.2s var(--ease);
-  transition-delay: calc(var(--i) * 32ms + 80ms);
+.char { display: inline-block; }
+html.js .hero__title .char { opacity: 0; }
+html.js .hero__title .char.on { opacity: 1; }
+.hero-caret {
+  display: inline-block; width: 0.06em; height: 0.78em; margin-left: 0.04em; vertical-align: -0.02em;
+  background: var(--accent); animation: caret 1s steps(1) infinite;
 }
-html.js.is-loaded .hero__title .char { transform: none; }
+.hero-caret.is-typing { animation: none; }
 
 .hero__bottom {
   display: flex; justify-content: space-between; align-items: flex-end; gap: 32px; flex-wrap: wrap;
@@ -660,11 +661,22 @@ html.js [data-anim="lines"]:not(.is-split) { opacity: 0; }
 html.js [data-anim="words"].is-split,
 html.js [data-anim="lines"].is-split { opacity: 1; transform: none; }
 
-html.js:not(.is-loaded) .hero [data-anim] { transition-delay: 0s !important; }
-.hero [data-anim="up"] { transition-delay: 0.55s; }
-.hero__actions[data-anim="up"] { transition-delay: 0.65s; }
-.hero [data-anim="fade"] { transition-delay: 0.4s; }
-.hero [data-anim="stagger"] > * { transition-delay: calc(0.75s + var(--s, 0) * 80ms); }
+.hero [data-anim="fade"] { transition-delay: 0s; }
+.hero [data-anim="up"] { transition-delay: 0.1s; }
+.hero__actions[data-anim="up"] { transition-delay: 0.22s; }
+.hero [data-anim="stagger"] > * { transition-delay: calc(0.35s + var(--s, 0) * 80ms); }
+
+html.js [data-anim="decode"]:not(.in-view) { opacity: 0; }
+html.js [data-anim="cmd"]:not(.in-view) .label { opacity: 0; }
+.section__head .label::before { content: "$ "; color: var(--muted); opacity: 0.6; }
+.type-caret {
+  display: inline-block; width: 0.55em; height: 1.05em; margin-left: 2px; vertical-align: -0.2em;
+  background: var(--accent); animation: caret 1s steps(1) infinite;
+}
+
+#soundToggle .snd-off { display: none; }
+#soundToggle.is-muted .snd-off { display: inline; }
+#soundToggle.is-muted .snd-wave { display: none; }
 
 .cookie-banner {
   position: fixed; left: var(--gutter); right: var(--gutter); bottom: 16px; z-index: 400;
@@ -776,5 +788,5 @@ html.js:not(.is-loaded) .hero [data-anim] { transition-delay: 0s !important; }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0s !important; }
-  html.js .hero__title .char { transform: none; }
+  html.js .hero__title .char { opacity: 1; }
 }

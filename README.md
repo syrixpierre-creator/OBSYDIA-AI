@@ -5,7 +5,7 @@ Site statique, sans framework ni dépendance JS : HTML, CSS et JavaScript écrit
 ## Fichiers
 - `index.html` — structure + SEO (title, description, Open Graph, Twitter Card, JSON-LD Schema.org)
 - `styles.css` — design system (tokens, grille 12 colonnes, dark/light, responsive, reduced-motion)
-- `inconnuboy.js` — moteur d'animation maison : intro terminal (nom tapé en temps réel, sons de clavier synthétisés en Web Audio, écran Welcome), split-text, reveals au scroll, marquee sensible à la vitesse de scroll, boutons magnétiques, curseur, compteurs
+- `inconnuboy.js` — moteur d'animation maison : intro terminal (nom tapé en temps réel, sons de clavier synthétisés en Web Audio, écran Welcome), nom du hero tapé avec curseur, commandes tapées sur chaque section, titres décodés, bouton son, split-text, reveals au scroll, marquee sensible à la vitesse de scroll, boutons magnétiques, curseur, compteurs
 - Traduction : Google Translate traduit automatiquement le site dans la langue du navigateur du visiteur (après consentement aux cookies tiers). Aucune clé de langue stockée.
 - `script.js` — thème, navigation, données GitHub en direct (seul SKYHOST est affiché dans la liste, dépôts de bots WhatsApp exclus des stats), consentement cookies
 - `manifest.json`, `robots.txt`, `sitemap.xml` — SEO / PWA
