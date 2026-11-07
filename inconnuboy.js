@@ -744,6 +744,7 @@
       }
     },
     observe,
+    sound,
     initMarquee,
     countWhenVisible,
     spotlight,
