@@ -119,7 +119,7 @@ The installer:
 2. installs Docker Engine and the Compose plugin if missing;
 3. clones the repository to `/opt/obsydia-ai`, or updates an existing installation;
 4. creates `.env`, generating `JWT_SECRET`, `SESSION_SECRET`, `ENCRYPTION_KEY` and the MongoDB password. Values that already exist are **never overwritten**;
-5. asks for the domain, XKIRO keys and admin email (reading from `/dev/tty`, so it works with `curl | bash`);
+5. asks for the domain, DeepSeek API keys and admin email (reading from `/dev/tty`, so it works with `curl | bash`);
 6. writes the Caddy config: HTTPS for a domain, plain HTTP on the server IP otherwise. It warns if DNS does not point to the server;
 7. takes a safety backup before upgrading an existing installation;
 8. builds and starts the containers, with persistent volumes for MongoDB, uploads/artifacts and certificates;
@@ -162,7 +162,7 @@ A backup contains a gzip `mongodump` archive, the `/data` volume (uploads and ZI
 
 See [`.env.example`](.env.example). Every variable is validated at startup, and the server refuses to start with a clear message if a value is invalid or a production secret is missing or weak. Secrets are never sent to the browser: the frontend only receives `/api/public/config`.
 
-Key groups: identity (`APP_*`, `AI_*`), provider (`XKIRO_*`, `TRANSCRIPTION_*`), database (`MONGODB_URI` or `MONGO_ROOT_*`), secrets, SMTP, Google OAuth, Stripe, PayPal, domain, plan limits (`FREE_/PRO_/PREMIUM_TOKEN_LIMIT`, `*_RESET_HOURS`, prices), referrals, teams, upload limits.
+Key groups: identity (`APP_*`, `AI_*`), provider (`AI_*`, `TRANSCRIPTION_*`), database (`MONGODB_URI` or `MONGO_ROOT_*`), secrets, SMTP, Google OAuth, Stripe, PayPal, domain, plan limits (`FREE_/PRO_/PREMIUM_TOKEN_LIMIT`, `*_RESET_HOURS`, prices), referrals, teams, upload limits.
 
 ## AI provider (DeepSeek) and multiple keys
 
@@ -233,7 +233,7 @@ const client = new OpenAI({ apiKey: process.env.OBSYDIA_API_KEY, baseURL: "https
 ## Render deployment
 
 1. Push the repository, then in Render: **New → Blueprint** and select it (`render.yaml`).
-2. Fill the `sync: false` values: `APP_URL` (e.g. `https://obsydia-ai.onrender.com`), `MONGODB_URI` (Atlas), `ADMIN_PASSWORD`, `XKIRO_API_KEYS`, SMTP, Stripe and PayPal.
+2. Fill the `sync: false` values: `APP_URL` (e.g. `https://obsydia-ai.onrender.com`), `MONGODB_URI` (Atlas), `ADMIN_PASSWORD`, `AI_API_KEYS`, SMTP, Stripe and PayPal.
 3. Build: `npm ci --include=dev && npm run build` · Start: `npm start` · Health check: `/health`.
 4. The blueprint uses the **Starter** plan with a 5 GB persistent disk at `/var/data` for uploads and ZIPs. On the Free plan there is no persistent disk (uploaded files and artifacts are lost on restart) and the service sleeps after inactivity.
 
@@ -281,7 +281,7 @@ MONGODB_TEST_URI=mongodb://127.0.0.1:27017/obsydia-test npm test
 |---|---|
 | Installer: "does not resolve" / HTTPS pending | Create an A record for the domain pointing to the server IP, open 80/443, re-run `install.sh`; check `docker compose logs caddy` |
 | App not healthy | `docker compose logs app`. Invalid configuration is listed variable by variable |
-| "AI provider has not been configured" | Add keys in `.env` (`XKIRO_API_KEYS`) or in Admin → Provider keys, then use **Test** |
+| "AI provider has not been configured" | Add keys in `.env` (`AI_API_KEYS`) or in Admin → Provider keys, then use **Test** |
 | All keys in *cooldown* | The provider returned 429 with Retry-After; wait, or reset the cooldown from the admin page after checking your quota |
 | Users never receive codes | Configure SMTP (Gmail requires an App Password) and run `update.sh` |
 | Paid plan not activated | Check the webhook endpoint and secret; Stripe/PayPal delivery logs; `webhook_events` collection |
@@ -302,7 +302,7 @@ curl -fsSL https://raw.githubusercontent.com/syrixpierre-creator/OBSYDIA-AI/main
 
 **Mise à jour :** `sudo /opt/obsydia-ai/update.sh` · **Sauvegarde :** `sudo /opt/obsydia-ai/backup.sh` · **Restauration :** `sudo /opt/obsydia-ai/restore.sh <fichier>` · **État :** `./healthcheck.sh`.
 
-Les clés XKIRO s'ajoutent sans limite dans `.env` ou dans *Administration → Clés fournisseur* (chiffrées). L'identité de l'IA (nom, personnalité, prompt, message d'accueil) se configure dans `.env` puis peut être modifiée depuis le tableau de bord.
+Les clés DeepSeek s'ajoutent sans limite dans `.env` ou dans *Administration → Clés fournisseur* (chiffrées). L'identité de l'IA (nom, personnalité, prompt, message d'accueil) se configure dans `.env` puis peut être modifiée depuis le tableau de bord.
 
 ---
 
