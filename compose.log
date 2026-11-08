@@ -1,0 +1,234 @@
+time="2026-11-08T18:43:59Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-11-08T18:43:59Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-11-08T18:43:59Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+time="2026-11-08T18:43:59Z" level=warning msg="The \"POSTGRES_PASSWORD\" variable is not set. Defaulting to a blank string."
+ Image nginx:1.27-alpine Pulling 
+ Image postgres:16-alpine Pulling 
+ Image redis:7-alpine Pulling 
+ Image inconnu-sms:latest Pulling 
+ Image inconnu-sms:latest Error pull access denied for inconnu-sms, repository does not exist or may require 'docker login'
+ 9df8a060171e Pulling fs layer 0B
+ 108fda73eb54 Pulling fs layer 0B
+ 850c0285d2f3 Pulling fs layer 0B
+ 45a91a95fdfe Pulling fs layer 0B
+ a8b9fccd8d77 Pulling fs layer 0B
+ 881fc932939e Pulling fs layer 0B
+ 07e60219949d Pulling fs layer 0B
+ ec3414c15456 Pulling fs layer 0B
+ ac5e852d5d1d Pulling fs layer 0B
+ fd818ebd7c87 Pulling fs layer 0B
+ 55cd3be29a9d Pulling fs layer 0B
+ d7e507024086 Pulling fs layer 0B
+ 39c2ddfd6010 Pulling fs layer 0B
+ 81bd8ed7ec67 Pulling fs layer 0B
+ 197eb75867ef Pulling fs layer 0B
+ 34a64644b756 Pulling fs layer 0B
+ 61ca4f733c80 Pulling fs layer 0B
+ f18232174bc9 Pulling fs layer 0B
+ b464cfdf2a63 Pulling fs layer 0B
+ 9df8a060171e Download complete 0B
+ 55cd3be29a9d Download complete 0B
+ 45a91a95fdfe Download complete 0B
+ 850c0285d2f3 Downloading 9.437MB
+ 850c0285d2f3 Downloading 26.21MB
+ a8b9fccd8d77 Download complete 0B
+ 108fda73eb54 Download complete 0B
+ 850c0285d2f3 Downloading 38.8MB
+ ac5e852d5d1d Downloading 9.669kB
+ 850c0285d2f3 Downloading 52.43MB
+ 881fc932939e Download complete 0B
+ ac5e852d5d1d Download complete 0B
+ 850c0285d2f3 Downloading 65.01MB
+ 881fc932939e Extracting 1B
+ 850c0285d2f3 Downloading 78.64MB
+ fd818ebd7c87 Download complete 0B
+ 881fc932939e Pull complete 0B
+ fd818ebd7c87 Pull complete 0B
+ 850c0285d2f3 Downloading 90.18MB
+ ec3414c15456 Download complete 0B
+ 07e60219949d Download complete 0B
+ 850c0285d2f3 Downloading 102.8MB
+ a8b9fccd8d77 Pull complete 0B
+ ec3414c15456 Pull complete 0B
+ 07e60219949d Pull complete 0B
+ 850c0285d2f3 Downloading 111.3MB
+ 59bde9deb524 Download complete 0B
+ 100397b92304 Pulling fs layer 0B
+ ed20a3352991 Pulling fs layer 0B
+ 871d48e9bf6b Pulling fs layer 0B
+ 322b6e6144f6 Pulling fs layer 0B
+ ee92a57da343 Pulling fs layer 0B
+ eced4433665e Pulling fs layer 0B
+ 4f4fb700ef54 Pulling fs layer 0B
+ 60cee29fe688 Download complete 0B
+ 850c0285d2f3 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ d7e507024086 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ b464cfdf2a63 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ 197eb75867ef Download complete 0B
+ 81bd8ed7ec67 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ 34a64644b756 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ 850c0285d2f3 Extracting 1B
+ 61ca4f733c80 Download complete 0B
+ 850c0285d2f3 Extracting 1B
+ 39c2ddfd6010 Downloading 1.049MB
+ f18232174bc9 Downloading 1.049MB
+ 850c0285d2f3 Extracting 1B
+ 39c2ddfd6010 Downloading 5.243MB
+ f18232174bc9 Download complete 0B
+ f18232174bc9 Extracting 1B
+ 850c0285d2f3 Extracting 1B
+ 2a84448aca9c Download complete 0B
+ 39c2ddfd6010 Downloading 11.53MB
+ d7e507024086 Pull complete 0B
+ b464cfdf2a63 Pull complete 0B
+ 197eb75867ef Pull complete 0B
+ 81bd8ed7ec67 Pull complete 0B
+ 34a64644b756 Extracting 1B
+ 61ca4f733c80 Pull complete 0B
+ f18232174bc9 Pull complete 0B
+ 850c0285d2f3 Extracting 1B
+ 39c2ddfd6010 Download complete 0B
+ 34a64644b756 Pull complete 0B
+ 39c2ddfd6010 Extracting 1B
+ 850c0285d2f3 Extracting 2B
+ 9261b9aff737 Download complete 0B
+ 100397b92304 Download complete 0B
+ 39c2ddfd6010 Extracting 1B
+ 850c0285d2f3 Extracting 2B
+ ed20a3352991 Download complete 0B
+ 39c2ddfd6010 Extracting 1B
+ 850c0285d2f3 Extracting 2B
+ 39c2ddfd6010 Pull complete 0B
+ Image nginx:1.27-alpine Pulled 
+ 871d48e9bf6b Downloading 1.049MB
+ 322b6e6144f6 Download complete 0B
+ 850c0285d2f3 Extracting 2B
+ ee92a57da343 Download complete 0B
+ 871d48e9bf6b Download complete 0B
+ 871d48e9bf6b Extracting 1B
+ 850c0285d2f3 Extracting 2B
+ 4f4fb700ef54 Download complete 0B
+ ed20a3352991 Pull complete 0B
+ 322b6e6144f6 Pull complete 0B
+ 871d48e9bf6b Pull complete 0B
+ 55cd3be29a9d Pull complete 0B
+ 108fda73eb54 Pull complete 0B
+ ac5e852d5d1d Pull complete 0B
+ 850c0285d2f3 Pull complete 0B
+ 9df8a060171e Pull complete 0B
+ 45a91a95fdfe Pull complete 0B
+ Image postgres:16-alpine Pulled 
+ eced4433665e Downloading 5.243MB
+ eced4433665e Download complete 0B
+ d5050497c244 Download complete 0B
+ 5602e6b31c82 Download complete 0B
+ eced4433665e Extracting 1B
+ eced4433665e Extracting 1B
+ eced4433665e Extracting 1B
+ eced4433665e Extracting 1B
+ 100397b92304 Pull complete 0B
+ ee92a57da343 Pull complete 0B
+ 4f4fb700ef54 Pull complete 0B
+ eced4433665e Pull complete 0B
+ Image redis:7-alpine Pulled 
+ Image inconnu-sms:latest Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 493B done
+#1 DONE 0.0s
+
+#2 [internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.51kB done
+#2 DONE 0.0s
+
+#3 resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 1.2s
+
+#4 docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#4 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0B / 11.98MB 0.2s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 2.10MB / 11.98MB 0.3s
+#4 sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 11.98MB / 11.98MB 0.4s done
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416
+#4 extracting sha256:96918c57e42509b97f10c074d80672ecdbd3bb7dcd38c1bd95960cf291207416 0.1s done
+#4 DONE 0.6s
+
+#5 [internal] load metadata for docker.io/library/node:22-alpine
+#5 DONE 1.7s
+
+#6 [internal] load .dockerignore
+#6 transferring context: 94B done
+#6 DONE 0.0s
+
+#7 [internal] load build context
+#7 transferring context: 1.79MB 0.0s done
+#7 DONE 0.1s
+
+#8 [deps 1/5] FROM docker.io/library/node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202
+#8 resolve docker.io/library/node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202 0.0s done
+#8 extracting sha256:881fc932939efef04ca120ad44bbd2c0917851eb247aa4995428afb1e80ede17 0.1s done
+#8 sha256:071409a402546fea9e56af710d951a9e0c9bb205e4b1186811677d2c9dcad115 443B / 443B 0.1s done
+#8 sha256:df11f9b3da94f640e357ccc86df09a574dc04df1ad95e012f511f4a02b566cd3 0B / 1.26MB 0.3s
+#8 sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 0B / 56.22MB 0.3s
+#8 sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 9.44MB / 56.22MB 0.5s
+#8 sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 29.36MB / 56.22MB 0.6s
+#8 sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 48.23MB / 56.22MB 0.8s
+#8 sha256:df11f9b3da94f640e357ccc86df09a574dc04df1ad95e012f511f4a02b566cd3 1.26MB / 1.26MB 0.9s done
+#8 sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 56.22MB / 56.22MB 0.8s done
+#8 extracting sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c
+#8 extracting sha256:2a9491572f6e8f9c3be47a2d17b7dcd30f264003f2cbeedf9359544b3ca5396c 1.5s done
+#8 DONE 2.4s
+
+#8 [deps 1/5] FROM docker.io/library/node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202
+#8 extracting sha256:df11f9b3da94f640e357ccc86df09a574dc04df1ad95e012f511f4a02b566cd3 0.0s done
+#8 extracting sha256:071409a402546fea9e56af710d951a9e0c9bb205e4b1186811677d2c9dcad115 done
+#8 DONE 2.4s
+
+#9 [deps 2/5] RUN apk add --no-cache libc6-compat openssl
+#9 0.193 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+#9 0.194 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+#9 0.194 ERROR: unable to select packages:
+#9 0.194   libc6-compat (no such package):
+#9 0.194     required by: world[libc6-compat]
+#9 0.194   openssl (no such package):
+#9 0.194     required by: world[openssl]
+#9 ...
+
+#10 [runner  2/11] RUN apk add --no-cache openssl tini && addgroup -S app && adduser -S app -G app
+#10 0.190 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+#10 0.191 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+#10 0.191 ERROR: unable to select packages:
+#10 0.191   openssl (no such package):
+#10 0.191     required by: world[openssl]
+#10 0.191   tini (no such package):
+#10 0.191     required by: world[tini]
+#10 ERROR: process "/bin/sh -c apk add --no-cache openssl tini && addgroup -S app && adduser -S app -G app" did not complete successfully: exit code: 2
+
+#9 [deps 2/5] RUN apk add --no-cache libc6-compat openssl
+#9 ERROR: process "/bin/sh -c apk add --no-cache libc6-compat openssl" did not complete successfully: exit code: 2
+------
+ > [runner  2/11] RUN apk add --no-cache openssl tini && addgroup -S app && adduser -S app -G app:
+0.190 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+0.191 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+0.191 ERROR: unable to select packages:
+0.191   openssl (no such package):
+0.191     required by: world[openssl]
+0.191   tini (no such package):
+0.191     required by: world[tini]
+------
+------
+ > [deps 2/5] RUN apk add --no-cache libc6-compat openssl:
+0.193 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/main/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+0.194 WARNING: fetching https://dl-cdn.alpinelinux.org/alpine/v3.24/community/x86_64/APKINDEX.tar.gz: DNS: name does not exist
+0.194 ERROR: unable to select packages:
+0.194   libc6-compat (no such package):
+0.194     required by: world[libc6-compat]
+0.194   openssl (no such package):
+0.194     required by: world[openssl]
+------
+failed to solve: process "/bin/sh -c apk add --no-cache openssl tini && addgroup -S app && adduser -S app -G app" did not complete successfully: exit code: 2
+

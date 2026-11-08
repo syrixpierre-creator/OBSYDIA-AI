@@ -1,0 +1,586 @@
+// INCONNU SMS — database schema
+// All money amounts are stored as integer cents (USD by default) to avoid float errors.
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum RoleName {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum UserStatus {
+  ACTIVE
+  SUSPENDED
+}
+
+enum TokenType {
+  EMAIL_VERIFY
+  PASSWORD_RESET
+}
+
+enum WalletTxType {
+  CREDIT // funds added (Stripe)
+  DEBIT // order purchase
+  REFUND // order refund back to wallet
+  ADJUSTMENT // admin manual adjustment (audited)
+  WITHDRAWAL // money returned to card via Stripe refund
+}
+
+enum OrderStatus {
+  PENDING // wallet debited, waiting for provider confirmation
+  ACTIVE // number assigned, waiting for SMS
+  RECEIVED // at least one SMS received
+  COMPLETED // finished
+  CANCELLED // cancelled and refunded
+  EXPIRED // expired without SMS, refunded
+  FAILED // provider refused, refunded
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCEEDED
+  FAILED
+  EXPIRED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentPurpose {
+  TOPUP
+  ORDER
+}
+
+enum RefundStatus {
+  PENDING
+  COMPLETED
+  REJECTED
+  FAILED
+}
+
+enum RefundTarget {
+  WALLET
+  CARD
+}
+
+enum TicketStatus {
+  OPEN
+  PENDING
+  ANSWERED
+  CLOSED
+}
+
+enum TicketPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum PricingScope {
+  GLOBAL
+  COUNTRY
+  SERVICE
+  COUNTRY_SERVICE
+}
+
+model Role {
+  id          Int      @id @default(autoincrement())
+  name        RoleName @unique
+  description String?
+  users       User[]
+
+  @@map("roles")
+}
+
+model User {
+  id              String     @id @default(cuid())
+  email           String     @unique
+  name            String
+  passwordHash    String
+  roleId          Int
+  role            Role       @relation(fields: [roleId], references: [id])
+  status          UserStatus @default(ACTIVE)
+  emailVerifiedAt DateTime?
+  suspendedReason String?
+  lastLoginAt     DateTime?
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  wallet        Wallet?
+  sessions      Session[]
+  tokens        VerificationToken[]
+  orders        Order[]
+  payments      Payment[]
+  refunds       Refund[]            @relation("RefundUser")
+  processed     Refund[]            @relation("RefundProcessor")
+  apiKeys       ApiKey[]
+  apiLogs       ApiLog[]
+  webhooks      Webhook[]
+  tickets       SupportTicket[]
+  ticketReplies TicketMessage[]
+  notifications Notification[]
+  auditLogs     AuditLog[]
+
+  @@index([roleId])
+  @@index([createdAt])
+  @@map("users")
+}
+
+model Session {
+  id         String   @id @default(cuid())
+  tokenHash  String   @unique
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip         String?
+  userAgent  String?
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("sessions")
+}
+
+model VerificationToken {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      TokenType
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, type])
+  @@map("verification_tokens")
+}
+
+model Wallet {
+  id           String              @id @default(cuid())
+  userId       String              @unique
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balanceCents Int                 @default(0)
+  currency     String              @default("USD")
+  updatedAt    DateTime            @updatedAt
+  createdAt    DateTime            @default(now())
+  transactions WalletTransaction[]
+
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id                String       @id @default(cuid())
+  walletId          String
+  wallet            Wallet       @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  type              WalletTxType
+  amountCents       Int // signed: positive = credit, negative = debit
+  balanceAfterCents Int
+  description       String
+  // Unique key making each ledger movement idempotent (e.g. "stripe:cs_xxx", "order:debit:<id>")
+  idempotencyKey    String       @unique
+  orderId           String?
+  order             Order?       @relation(fields: [orderId], references: [id])
+  paymentId         String?
+  payment           Payment?     @relation(fields: [paymentId], references: [id])
+  refundId          String?
+  refund            Refund?      @relation(fields: [refundId], references: [id])
+  actorId           String?
+  createdAt         DateTime     @default(now())
+
+  @@index([walletId, createdAt])
+  @@index([orderId])
+  @@index([paymentId])
+  @@map("wallet_transactions")
+}
+
+model Provider {
+  id              String            @id @default(cuid())
+  code            String            @unique // adapter code, e.g. "demo"
+  name            String
+  adapter         String // adapter key in the registry
+  enabled         Boolean           @default(true)
+  priority        Int               @default(100) // lower = preferred
+  isDemo          Boolean           @default(false)
+  // Non-secret configuration (base URL override, timeouts...)
+  config          Json              @default("{}")
+  // AES-256-GCM encrypted API key (optional; env var takes precedence)
+  apiKeyEncrypted String?
+  balanceCents    Int?
+  lastSyncAt      DateTime?
+  lastSyncStatus  String?
+  lastError       String?
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  offerings       ProviderService[]
+  orders          Order[]
+
+  @@map("providers")
+}
+
+model Country {
+  id        Int               @id @default(autoincrement())
+  code      String            @unique // ISO-3166 alpha-2 (upper case)
+  name      String
+  enabled   Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  offerings ProviderService[]
+  orders    Order[]
+  rules     PricingRule[]
+  promos    Promotion[]
+
+  @@map("countries")
+}
+
+model Service {
+  id        Int               @id @default(autoincrement())
+  code      String            @unique // normalized slug, e.g. "telegram"
+  name      String
+  enabled   Boolean           @default(true)
+  createdAt DateTime          @default(now())
+  offerings ProviderService[]
+  orders    Order[]
+  rules     PricingRule[]
+  promos    Promotion[]
+
+  @@map("services")
+}
+
+// One sellable offering = (provider, country, service) with live cost & stock synced from the provider.
+model ProviderService {
+  id                  String    @id @default(cuid())
+  providerId          String
+  provider            Provider  @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  countryId           Int
+  country             Country   @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  serviceId           Int
+  service             Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  providerCountryCode String
+  providerServiceCode String
+  costCents           Int // provider cost
+  available           Int       @default(0)
+  enabled             Boolean   @default(true)
+  // Optional manual sale price override (cents) for this exact offering
+  priceOverrideCents  Int?
+  lastSyncedAt        DateTime  @default(now())
+  orders              Order[]
+
+  @@unique([providerId, countryId, serviceId])
+  @@index([countryId])
+  @@index([serviceId])
+  @@index([available])
+  @@map("provider_services")
+}
+
+model PricingRule {
+  id               Int          @id @default(autoincrement())
+  scope            PricingScope
+  countryId        Int?
+  country          Country?     @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  serviceId        Int?
+  service          Service?     @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  marginPercent    Float        @default(0)
+  marginFixedCents Int          @default(0)
+  minPriceCents    Int?
+  enabled          Boolean      @default(true)
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  @@index([scope])
+  @@map("pricing_rules")
+}
+
+model Promotion {
+  id              Int       @id @default(autoincrement())
+  name            String
+  discountPercent Float
+  countryId       Int?
+  country         Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  serviceId       Int?
+  service         Service?  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  startsAt        DateTime
+  endsAt          DateTime
+  active          Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  @@index([active, startsAt, endsAt])
+  @@map("promotions")
+}
+
+model Order {
+  id                String          @id @default(cuid())
+  userId            String
+  user              User            @relation(fields: [userId], references: [id])
+  providerId        String
+  provider          Provider        @relation(fields: [providerId], references: [id])
+  providerServiceId String?
+  providerService   ProviderService? @relation(fields: [providerServiceId], references: [id], onDelete: SetNull)
+  countryId         Int
+  country           Country         @relation(fields: [countryId], references: [id])
+  serviceId         Int
+  service           Service         @relation(fields: [serviceId], references: [id])
+  status            OrderStatus     @default(PENDING)
+  providerOrderId   String?
+  phoneNumber       String?
+  priceCents        Int
+  costCents         Int
+  isDemo            Boolean         @default(false)
+  // Client-provided or derived key preventing duplicate purchases
+  idempotencyKey    String          @unique
+  apiKeyId          String?
+  apiKey            ApiKey?         @relation(fields: [apiKeyId], references: [id], onDelete: SetNull)
+  failureReason     String?
+  expiresAt         DateTime?
+  lastCheckedAt     DateTime?
+  completedAt       DateTime?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  sms               OrderSms[]
+  walletTxs         WalletTransaction[]
+  refunds           Refund[]
+
+  @@unique([providerId, providerOrderId])
+  @@index([userId, createdAt])
+  @@index([status, expiresAt])
+  @@map("orders")
+}
+
+model OrderSms {
+  id            String   @id @default(cuid())
+  orderId       String
+  order         Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  providerSmsId String
+  sender        String?
+  text          String
+  code          String?
+  receivedAt    DateTime @default(now())
+
+  @@unique([orderId, providerSmsId])
+  @@map("order_sms")
+}
+
+model Payment {
+  id                    String         @id @default(cuid())
+  userId                String
+  user                  User           @relation(fields: [userId], references: [id])
+  purpose               PaymentPurpose @default(TOPUP)
+  stripeSessionId       String?        @unique
+  stripePaymentIntentId String?        @unique
+  amountCents           Int
+  refundedCents         Int            @default(0)
+  currency              String         @default("usd")
+  status                PaymentStatus  @default(PENDING)
+  // For ORDER purpose: { countryId, serviceId, offeringId }
+  metadata              Json           @default("{}")
+  failureReason         String?
+  completedAt           DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  walletTxs             WalletTransaction[]
+  refunds               Refund[]
+
+  @@index([userId, createdAt])
+  @@index([status])
+  @@map("payments")
+}
+
+model Refund {
+  id             String       @id @default(cuid())
+  userId         String
+  user           User         @relation("RefundUser", fields: [userId], references: [id])
+  orderId        String?
+  order          Order?       @relation(fields: [orderId], references: [id])
+  paymentId      String?
+  payment        Payment?     @relation(fields: [paymentId], references: [id])
+  target         RefundTarget @default(WALLET)
+  amountCents    Int
+  reason         String
+  status         RefundStatus @default(PENDING)
+  stripeRefundId String?      @unique
+  processedById  String?
+  processedBy    User?        @relation("RefundProcessor", fields: [processedById], references: [id])
+  automatic      Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  processedAt    DateTime?
+  walletTxs      WalletTransaction[]
+
+  @@index([status])
+  @@index([userId])
+  @@map("refunds")
+}
+
+model ApiKey {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  prefix          String // first chars shown in UI
+  keyHash         String    @unique // sha256 of the full key
+  rateLimitPerMin Int       @default(60)
+  lastUsedAt      DateTime?
+  revokedAt       DateTime?
+  createdAt       DateTime  @default(now())
+  logs            ApiLog[]
+  orders          Order[]
+
+  @@index([userId])
+  @@map("api_keys")
+}
+
+model ApiLog {
+  id         String   @id @default(cuid())
+  apiKeyId   String?
+  apiKey     ApiKey?  @relation(fields: [apiKeyId], references: [id], onDelete: SetNull)
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  method     String
+  path       String
+  statusCode Int
+  ip         String?
+  durationMs Int
+  createdAt  DateTime @default(now())
+
+  @@index([apiKeyId, createdAt])
+  @@index([userId, createdAt])
+  @@map("api_logs")
+}
+
+// Outgoing webhooks configured by users (API customers)
+model Webhook {
+  id             String    @id @default(cuid())
+  userId         String
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  url            String
+  secret         String // HMAC signing secret (shown once)
+  events         String[]
+  enabled        Boolean   @default(true)
+  lastDeliveryAt DateTime?
+  lastStatusCode Int?
+  failureCount   Int       @default(0)
+  createdAt      DateTime  @default(now())
+  deliveries     WebhookDelivery[]
+
+  @@index([userId])
+  @@map("webhooks")
+}
+
+model WebhookDelivery {
+  id         String   @id @default(cuid())
+  webhookId  String
+  webhook    Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+  event      String
+  payload    Json
+  statusCode Int?
+  success    Boolean  @default(false)
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([webhookId, createdAt])
+  @@map("webhook_deliveries")
+}
+
+// Incoming webhook events (Stripe, providers) — used for idempotency
+model InboundEvent {
+  id          String    @id @default(cuid())
+  source      String
+  eventId     String
+  type        String
+  processedAt DateTime?
+  error       String?
+  createdAt   DateTime  @default(now())
+
+  @@unique([source, eventId])
+  @@map("inbound_events")
+}
+
+model SupportTicket {
+  id        String          @id @default(cuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  subject   String
+  category  String          @default("general")
+  status    TicketStatus    @default(OPEN)
+  priority  TicketPriority  @default(NORMAL)
+  orderId   String?
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+  messages  TicketMessage[]
+
+  @@index([userId])
+  @@index([status, updatedAt])
+  @@map("support_tickets")
+}
+
+model TicketMessage {
+  id        String        @id @default(cuid())
+  ticketId  String
+  ticket    SupportTicket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  authorId  String
+  author    User          @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  body      String
+  isStaff   Boolean       @default(false)
+  createdAt DateTime      @default(now())
+
+  @@index([ticketId, createdAt])
+  @@map("ticket_messages")
+}
+
+model Notification {
+  id        String    @id @default(cuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, readAt])
+  @@map("notifications")
+}
+
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  metadata  Json     @default("{}")
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([action, createdAt])
+  @@index([actorId])
+  @@map("audit_logs")
+}
+
+model SystemLog {
+  id        String   @id @default(cuid())
+  level     String // info | warn | error
+  source    String // provider:demo, stripe, worker, ...
+  message   String
+  context   Json     @default("{}")
+  createdAt DateTime @default(now())
+
+  @@index([source, createdAt])
+  @@index([level, createdAt])
+  @@map("system_logs")
+}

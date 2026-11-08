@@ -1,0 +1,76 @@
+name: inconnu-sms
+
+x-app-env: &app-env
+  env_file: .env
+  environment:
+    DATABASE_URL: postgresql://${POSTGRES_USER:-inconnu}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-inconnu_sms}?schema=public
+    REDIS_URL: redis://redis:6379
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-inconnu}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-inconnu_sms}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-inconnu} -d ${POSTGRES_DB:-inconnu_sms}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--save", "", "--appendonly", "no", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+
+  app:
+    build: .
+    image: inconnu-sms:latest
+    init: true
+    restart: unless-stopped
+    <<: *app-env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    expose:
+      - "3000"
+
+  worker:
+    image: inconnu-sms:latest
+    init: true
+    restart: unless-stopped
+    <<: *app-env
+    environment:
+      INTERNAL_APP_URL: http://app:3000
+      RUN_MIGRATIONS: "false"
+      DATABASE_URL: postgresql://${POSTGRES_USER:-inconnu}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-inconnu_sms}?schema=public
+    command: ["node", "node_modules/tsx/dist/cli.mjs", "scripts/worker.ts"]
+    depends_on:
+      app:
+        condition: service_healthy
+
+  nginx:
+    image: nginx:1.27-alpine
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+      - "8443:443"
+    volumes:
+      - ./docker/nginx/templates:/etc/nginx/templates:ro
+      - ./docker/certbot/conf:/etc/letsencrypt:ro
+      - ./docker/certbot/www:/var/www/certbot:ro
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx/conf.d
+    depends_on:
+      app:
+        condition: service_healthy
+
+volumes:
+  pgdata:
