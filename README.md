@@ -4,7 +4,7 @@
 <p align="center"><b>Think. Create. Build. Deploy.</b> · <i>Pensez. Créez. Construisez. Déployez.</i></p>
 <p align="center">Created and developed by <b>Inconnu Boy Sensei</b> · inconnuboytech@gmail.com</p>
 
-OBSYDIA AI is a full-stack AI workspace: streaming conversations, an AI coding agent that plans, generates, validates and packages complete projects, versioned ZIP artifacts, sandboxed live previews, image/document/ZIP/voice inputs, token-based plans with Stripe and PayPal, a developer API, referrals, teams, an admin console, and English/French localization. XKIRO is the primary AI gateway, MongoDB the database.
+OBSYDIA AI is a full-stack AI workspace: streaming conversations, an AI coding agent that plans, generates, validates and packages complete projects, versioned ZIP artifacts, sandboxed live previews, image/document/ZIP/voice inputs, token-based plans with Stripe and PayPal, a developer API, referrals, teams, an admin console, and English/French localization. DeepSeek (`deepseek-v4-flash`) is the default AI provider through an OpenAI-compatible layer, MongoDB the database.
 
 ---
 
@@ -21,7 +21,7 @@ OBSYDIA AI is a full-stack AI workspace: streaming conversations, an AI coding a
 <img src="docs/screenshots/23-mobile-landing.png" width="200"> <img src="docs/screenshots/24-mobile-chat.png" width="200"> <img src="docs/screenshots/25-mobile-sidebar.png" width="200">
 </p>
 
-All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were captured from the real application (real MongoDB, auth, token accounting, project engine, ZIP packaging and sandboxed preview). The AI replies shown came from a local OpenAI-compatible stand-in, because the XKIRO API was not reachable from the build sandbox.
+All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were captured from the real application (real MongoDB, auth, token accounting, project engine, ZIP packaging and sandboxed preview). The AI replies shown came from a local OpenAI-compatible stand-in, because the AI provider API was not reachable from the build sandbox.
 
 ---
 
@@ -33,7 +33,7 @@ All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were capt
 4. [VPS one-command installation](#vps-one-command-installation)
 5. [Updating, backup, restore](#updating-backup-and-restore)
 6. [Environment variables](#environment-variables)
-7. [XKIRO integration and multiple keys](#xkiro-integration-and-multiple-keys)
+7. [AI provider (DeepSeek) and multiple keys](#ai-provider-deepseek-and-multiple-keys)
 8. [AI personalization](#ai-personalization)
 9. [MongoDB](#mongodb)
 10. [Email (SMTP / Gmail)](#email)
@@ -63,7 +63,7 @@ All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were capt
 | **Developer API** | `obs_live_…` keys (hashed, shown once), regenerate/revoke, per-key rate limits by plan, usage & error history, `/api/v1/chat` (+ `/chat/completions` alias for OpenAI SDKs), `/models`, `/usage`, `/files` |
 | **Growth** | Referral links; 10,000 bonus tokens per 5 verified referrals, granted exactly once (unique milestone index); self/duplicate/same-network referrals rejected; promo codes (percent/fixed, plan restrictions, expiry, max uses, history) |
 | **Teams** | Premium owner + up to 3 invited members (enforced server-side, counting pending invites), email-bound invitations, editor/viewer roles, shared projects. Tokens stay individual |
-| **Admin** | Stats, users (search, plan, role, suspend/reactivate, token adjustments), AI configuration, unlimited XKIRO key manager (add/test/enable/disable/remove, health, cooldowns, usage, last error), plans & limits, promo codes, payments, subscriptions, teams, referrals, audit log |
+| **Admin** | Stats, users (search, plan, role, suspend/reactivate, token adjustments), AI configuration, unlimited AI provider key manager (add/test/enable/disable/remove, health, cooldowns, usage, last error), plans & limits, promo codes, payments, subscriptions, teams, referrals, audit log |
 | **i18n** | Entire UI, errors and transactional emails in English and French; AI replies in the user's language |
 | **Deployment** | Docker image, Compose stack (app + MongoDB 7 + Caddy with automatic HTTPS), idempotent installer, update/backup/restore/healthcheck scripts, `render.yaml`, GitHub Actions CI |
 
@@ -79,7 +79,7 @@ All 26 screenshots are in [`docs/screenshots`](docs/screenshots). They were capt
 │   ├─ /api/webhooks Stripe / PayPal (raw body, signature check)   │
 │   └─ /preview/*   sandboxed project files (signed tokens)        │
 │        │                                                         │
-│        ├── ProviderManager ──► XKIRO (OpenAI-compatible)         │
+│        ├── ProviderManager ──► DeepSeek (OpenAI-compatible)      │
 │        ├── MongoDB 7 (Mongoose)                                  │
 │        └── /data volume: uploads + ZIP artifacts                 │
 └──────────────────────────────────────────────────────────────────┘
@@ -110,7 +110,7 @@ With a domain and keys, non-interactively:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/syrixpierre-creator/OBSYDIA-AI/main/install.sh \
-  | sudo DOMAIN=obsydia.example.com ACME_EMAIL=inconnuboytech@gmail.com XKIRO_API_KEYS="KEY_1,KEY_2" bash
+  | sudo DOMAIN=obsydia.example.com ACME_EMAIL=inconnuboytech@gmail.com AI_API_KEYS="sk-1,sk-2" bash
 ```
 
 The installer:
@@ -164,16 +164,15 @@ See [`.env.example`](.env.example). Every variable is validated at startup, and 
 
 Key groups: identity (`APP_*`, `AI_*`), provider (`XKIRO_*`, `TRANSCRIPTION_*`), database (`MONGODB_URI` or `MONGO_ROOT_*`), secrets, SMTP, Google OAuth, Stripe, PayPal, domain, plan limits (`FREE_/PRO_/PREMIUM_TOKEN_LIMIT`, `*_RESET_HOURS`, prices), referrals, teams, upload limits.
 
-## XKIRO integration and multiple keys
+## AI provider (DeepSeek) and multiple keys
 
-- Base URL `https://api.xkiro.com/v1`, default model `qwen/qwen3.8-omni-flash:free`, through the official `openai` SDK with a custom `baseURL`.
-- **Unlimited keys:** `XKIRO_API_KEYS=["KEY_1","KEY_2",…]` in `.env` (comma-separated also accepted), plus any number added in **Administration → Provider keys**. Dashboard keys are encrypted with AES-256-GCM using `ENCRYPTION_KEY`, shown only masked, and never logged or sent to the browser.
-- **Selection:** round-robin across enabled keys that are not cooling down.
-- **429:** the key cools down for the `Retry-After` duration (or exponential backoff) and is not retried before then. The request may move to another authorized key. **401/403:** the key is quarantined for 30 minutes. **5xx/timeouts:** backoff, then another key. **4xx client errors:** not retried.
-- **Streaming:** usage is requested with `stream_options.include_usage`; if the model rejects that parameter, the manager stops sending it and estimates instead.
-- **Per-key stats:** requests, successes, errors, 429s, tokens, last success, last error and latency, persisted daily in `provider_usage`. Provider-side quotas are shown as *Unavailable* because XKIRO does not expose them; they are never invented.
-- Keys are used only with their owner's permission. Quotas are not assumed to combine, and rotation is not used to bypass account limits.
-- Capabilities (vision/audio/tools) stay **off** until you verify the model supports them (`XKIRO_SUPPORTS_*` or the admin AI configuration). Unsupported requests fail with an explicit 422.
+- Default provider **DeepSeek**: base URL `https://api.deepseek.com`, model **`deepseek-v4-flash`**, through the official `openai` SDK with a custom `baseURL`. Flash is DeepSeek's fast, low-cost model; its *thinking* mode is disabled by default (`AI_EXTRA_BODY`) so answers do not spend extra reasoning tokens. Set `AI_MODEL=deepseek-v4-pro` (or add it to `AI_MODELS`) for harder tasks.
+- If the API refuses the `thinking` parameter, the manager drops it automatically and keeps working.
+- Any OpenAI-compatible provider works: set `AI_PROVIDER`, `AI_BASE_URL`, `AI_MODEL` and `AI_API_KEYS`. Older `XKIRO_*` variables are still honoured when `AI_PROVIDER=xkiro`.
+- **Unlimited keys:** `AI_API_KEYS=["sk-1","sk-2",…]` in `.env` (comma-separated also accepted), plus any number added in **Administration → Provider keys** (encrypted with AES-256-GCM, shown masked, never logged). Dashboard keys are stored per provider, so keys saved for another provider are not used.
+- **Selection:** round-robin across enabled keys that are not cooling down. **429:** cooldown for `Retry-After` (or exponential backoff), then another authorized key. **401/403:** key quarantined 30 minutes. **5xx/timeouts:** backoff, then another key. **4xx:** not retried.
+- Model overrides saved in the admin are tied to the provider they were saved for; after switching provider, the new provider's model is used until you save again.
+- Per-key stats (requests, errors, 429s, tokens, last success/error, latency) are persisted daily in `provider_usage`. Provider-side quotas are shown as *Unavailable* when the provider does not expose them.
 
 ## AI personalization
 

@@ -15,6 +15,7 @@ import { applyPlanToBalance, getBalanceView, grantBonus } from "../services/toke
 import { publicUser } from "../services/users.js";
 import { Session } from "../models/index.js";
 import { envAds, getAds, invalidateAds } from "../services/ads.js";
+import { keyFingerprint, providerConfig } from "../config/provider.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAdmin);
@@ -164,12 +165,13 @@ const aiSchema = z.object({
 });
 
 adminRouter.get("/ai-settings", async (_req, res) => {
-  res.json({ effective: await getAiSettings(), overrides: await getAiOverrides(), defaults: envAiSettings() });
+  const pc = providerConfig();
+  res.json({ effective: await getAiSettings(), overrides: await getAiOverrides(), defaults: envAiSettings(), provider: { name: pc.name, label: pc.label, baseURL: pc.baseURL } });
 });
 
 adminRouter.put("/ai-settings", async (req, res) => {
   const input = body(req, aiSchema);
-  await writeSetting("ai", input, req.user._id);
+  await writeSetting("ai", { ...input, modelsProvider: providerConfig().name }, req.user._id);
   await audit(req, "admin.ai_settings_updated", { meta: { fields: Object.keys(input) } });
   res.json({ effective: await getAiSettings(), overrides: input });
 });
@@ -238,9 +240,9 @@ adminRouter.get("/provider-keys", async (_req, res) => {
 
 adminRouter.post("/provider-keys", async (req, res) => {
   const input = body(req, z.object({ label: z.string().trim().min(1).max(60), owner: z.string().trim().max(80).default(""), key: z.string().trim().min(10).max(500), test: z.boolean().default(true) }));
-  const fingerprint = sha256(`xkiro:${input.key}`).slice(0, 16);
+  const fingerprint = sha256(keyFingerprint(input.key)).slice(0, 16);
   if ((await ProviderKey.exists({ fingerprint })) || providerManager.get(fingerprint)) throw conflict("key_exists", "This key is already configured");
-  const doc = await ProviderKey.create({ label: input.label, owner: input.owner, encryptedKey: encrypt(input.key), fingerprint, masked: maskSecret(input.key), addedBy: req.user._id });
+  const doc = await ProviderKey.create({ provider: providerConfig().name, label: input.label, owner: input.owner, encryptedKey: encrypt(input.key), fingerprint, masked: maskSecret(input.key), addedBy: req.user._id });
   await providerManager.refresh(true);
   await audit(req, "admin.provider_key_added", { targetType: "provider_key", targetId: doc._id, meta: { label: input.label, masked: doc.masked } });
   const test = input.test ? await providerManager.testKey(fingerprint) : null;
@@ -274,7 +276,7 @@ adminRouter.patch("/provider-keys/:fingerprint", async (req, res) => {
 adminRouter.delete("/provider-keys/:fingerprint", async (req, res) => {
   const fp = String(req.params.fingerprint);
   const r = await ProviderKey.deleteOne({ fingerprint: fp });
-  if (!r.deletedCount) throw badRequest("cannot_delete", "Environment keys must be removed from XKIRO_API_KEYS in .env");
+  if (!r.deletedCount) throw badRequest("cannot_delete", "Environment keys must be removed from AI_API_KEYS in .env");
   await providerManager.refresh(true);
   await audit(req, "admin.provider_key_removed", { targetType: "provider_key", targetId: fp });
   res.json({ ok: true });

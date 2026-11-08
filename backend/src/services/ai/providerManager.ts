@@ -1,5 +1,5 @@
 import OpenAI from "openai";
-import { env } from "../../config/env.js";
+import { providerConfig, keyFingerprint } from "../../config/provider.js";
 import { decrypt, maskSecret, sha256 } from "../../lib/crypto.js";
 import { AppError } from "../../lib/errors.js";
 import { logger, scrub } from "../../lib/logger.js";
@@ -110,20 +110,21 @@ export class ProviderManager {
   private cursor = 0;
   private loadedAt = 0;
   private streamUsageSupported = true;
+  private extraBodySupported = true;
   private clientFactory: (apiKey: string) => OpenAI;
 
   constructor(clientFactory?: (apiKey: string) => OpenAI) {
     this.clientFactory =
       clientFactory ||
       ((apiKey) =>
-        new OpenAI({ apiKey, baseURL: env().XKIRO_BASE_URL, timeout: env().XKIRO_TIMEOUT_MS, maxRetries: 0 }));
+        new OpenAI({ apiKey, baseURL: providerConfig().baseURL, timeout: providerConfig().timeoutMs, maxRetries: 0 }));
   }
 
   async refresh(force = false) {
     if (!force && Date.now() - this.loadedAt < 15_000 && this.keys.size) return;
     const next = new Map<string, KeyState>();
     const add = (secret: string, source: KeyState["source"], meta: { id?: string; label: string; owner?: string; enabled: boolean }) => {
-      const fingerprint = sha256(`xkiro:${secret}`).slice(0, 16);
+      const fingerprint = sha256(keyFingerprint(secret)).slice(0, 16);
       const prev = this.keys.get(fingerprint);
       next.set(fingerprint, {
         fingerprint,
@@ -153,11 +154,12 @@ export class ProviderManager {
       const doc = await AdminSetting.findOne({ key: "provider_disabled_env" }).lean<any>();
       disabledEnv = Array.isArray(doc?.value) ? doc.value : [];
     } catch {}
-    env().XKIRO_API_KEYS.forEach((k, i) =>
-      add(k, "env", { label: `ENV key ${i + 1}`, enabled: !disabledEnv.includes(sha256(`xkiro:${k}`).slice(0, 16)) })
+    const pc = providerConfig();
+    pc.keys.forEach((k, i) =>
+      add(k, "env", { label: `ENV key ${i + 1}`, enabled: !disabledEnv.includes(sha256(keyFingerprint(k)).slice(0, 16)) })
     );
     try {
-      const docs = await ProviderKey.find({}).select("+encryptedKey").lean<any[]>();
+      const docs = await ProviderKey.find({ provider: pc.name }).select("+encryptedKey").lean<any[]>();
       for (const d of docs) {
         try {
           add(decrypt(d.encryptedKey), "dashboard", { id: String(d._id), label: d.label, owner: d.owner, enabled: d.enabled });
@@ -247,8 +249,8 @@ export class ProviderManager {
 
   async chat(req: ChatRequest, opts: { fingerprint?: string } = {}): Promise<ChatResult> {
     await this.refresh();
-    if (!this.keys.size) throw new AppError(503, "provider_not_configured", "No XKIRO API key is configured");
-    const maxAttempts = Math.max(1, env().XKIRO_MAX_RETRIES + 1);
+    if (!this.keys.size) throw new AppError(503, "provider_not_configured", `No ${providerConfig().label} API key is configured`);
+    const maxAttempts = Math.max(1, providerConfig().maxRetries + 1);
     const tried = new Set<string>();
     let lastError: Classified | null = null;
 
@@ -305,14 +307,30 @@ export class ProviderManager {
 
   private async execute(key: KeyState, req: ChatRequest, onFirstByte: () => void) {
     const client = this.clientFactory(key.secret);
-    const model = req.model || env().XKIRO_MODEL;
+    const pc = providerConfig();
+    const model = req.model || pc.model;
     const base: Record<string, unknown> = { model, messages: req.messages };
-    if (req.maxTokens) base.max_tokens = req.maxTokens;
+    if (req.maxTokens) base.max_tokens = pc.maxOutputCap > 0 ? Math.min(req.maxTokens, pc.maxOutputCap) : req.maxTokens;
+    const extraKeys = Object.keys(pc.extraBody);
+    if (this.extraBodySupported && extraKeys.length) Object.assign(base, pc.extraBody);
+    const withExtraFallback = async <T>(fn: (params: Record<string, unknown>) => Promise<T>): Promise<T> => {
+      try {
+        return await fn(base);
+      } catch (err) {
+        const c = classifyError(err);
+        if (c.kind === "client" && this.extraBodySupported && extraKeys.some((k) => base[k] !== undefined) && (extraKeys.some((k) => c.message.toLowerCase().includes(k.toLowerCase())) || /unknown|unrecognized|unsupported|extra/i.test(c.message))) {
+          this.extraBodySupported = false;
+          for (const k of extraKeys) delete base[k];
+          return await fn(base);
+        }
+        throw err;
+      }
+    };
     if (typeof req.temperature === "number") base.temperature = req.temperature;
     if (req.responseFormat) base.response_format = { type: req.responseFormat };
 
     if (!req.onDelta) {
-      const res: any = await client.chat.completions.create(base as any, { signal: req.signal });
+      const res: any = await withExtraFallback((params) => client.chat.completions.create(params as any, { signal: req.signal }));
       onFirstByte();
       const choice = res.choices?.[0];
       return {
@@ -356,17 +374,17 @@ export class ProviderManager {
 
     if (this.streamUsageSupported) {
       try {
-        return await run(true);
+        return await withExtraFallback(() => run(true));
       } catch (err) {
         const c = classifyError(err);
         if (c.kind === "client" && /stream_options|include_usage/i.test(c.message)) {
           this.streamUsageSupported = false;
-          return await run(false);
+          return await withExtraFallback(() => run(false));
         }
         throw err;
       }
     }
-    return await run(false);
+    return await withExtraFallback(() => run(false));
   }
 
   async testKey(fingerprint: string) {
@@ -377,9 +395,10 @@ export class ProviderManager {
     try {
       const client = this.clientFactory(key.secret);
       const res: any = await client.chat.completions.create({
-        model: env().XKIRO_MODEL,
+        model: providerConfig().model,
         messages: [{ role: "user", content: "Reply with the single word: ok" }],
-        max_tokens: 8
+        max_tokens: 8,
+        ...(this.extraBodySupported ? providerConfig().extraBody : {})
       } as any);
       const latency = Date.now() - started;
       const usage = res.usage
@@ -388,7 +407,7 @@ export class ProviderManager {
       key.requests++;
       this.recordSuccess(key, latency, usage);
       key.cooldownUntil = 0;
-      return { ok: true, latencyMs: latency, model: res.model || env().XKIRO_MODEL, sample: String(res.choices?.[0]?.message?.content ?? "").slice(0, 40) };
+      return { ok: true, latencyMs: latency, model: res.model || providerConfig().model, sample: String(res.choices?.[0]?.message?.content ?? "").slice(0, 40) };
     } catch (err) {
       const c = classifyError(err);
       key.requests++;

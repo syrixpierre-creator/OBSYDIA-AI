@@ -138,15 +138,15 @@ if [[ -z "$CURRENT_URL" || "$CURRENT_URL" == "https://your-domain.com" ]]; then
   sed -i "s|^APP_URL=.*|APP_URL=$APP_URL_VALUE|" .env
 fi
 
-KEYS_NOW="$(env_get XKIRO_API_KEYS)"
+KEYS_NOW="$(env_get AI_API_KEYS)"
 if [[ -z "$KEYS_NOW" || "$KEYS_NOW" == "[]" ]]; then
-  KEYS_INPUT="${XKIRO_API_KEYS:-$(ask_secret "XKIRO API keys, comma separated (leave empty to add them later in the admin dashboard)")}"
+  KEYS_INPUT="${AI_API_KEYS:-${XKIRO_API_KEYS:-$(ask_secret "DeepSeek API keys, comma separated (leave empty to add them later in the admin dashboard)")}}"
   if [[ -n "$KEYS_INPUT" ]]; then
     if [[ "$KEYS_INPUT" == \[* ]]; then JSON_KEYS="$KEYS_INPUT"; else JSON_KEYS="$(printf '%s' "$KEYS_INPUT" | jq -R -c 'split(",") | map(gsub("^\\s+|\\s+$";"")) | map(select(length>0))')"; fi
-    sed -i "s|^XKIRO_API_KEYS=.*|XKIRO_API_KEYS=$JSON_KEYS|" .env
-    ok "XKIRO keys stored in .env"
+    if grep -q "^AI_API_KEYS=" .env; then sed -i "s|^AI_API_KEYS=.*|AI_API_KEYS=$JSON_KEYS|" .env; else echo "AI_API_KEYS=$JSON_KEYS" >> .env; fi
+    ok "AI provider keys stored in .env"
   else
-    warn "No XKIRO key yet — add keys later in Administration → Provider keys"
+    warn "No AI provider key yet — add keys later in Administration → Provider keys"
   fi
 fi
 

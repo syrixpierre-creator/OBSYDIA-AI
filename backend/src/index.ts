@@ -1,5 +1,6 @@
 import "./config/loadEnvFile.js";
 import { env } from "./config/env.js";
+import { providerConfig } from "./config/provider.js";
 import { logger } from "./lib/logger.js";
 import { connectDb, disconnectDb, syncIndexes } from "./lib/db.js";
 import { ensureDataDirs } from "./lib/storage.js";
@@ -28,8 +29,9 @@ async function main() {
   );
   await providerManager.refresh(true);
   const a = providerManager.availability();
-  if (!a.total) logger.warn("No XKIRO API key configured. Add keys to XKIRO_API_KEYS or through the admin dashboard.");
-  else logger.info({ keys: a.total }, "XKIRO provider keys loaded");
+  const pc = providerConfig();
+  if (!a.total) logger.warn(`No ${pc.label} API key configured. Add keys to AI_API_KEYS or through the admin dashboard.`);
+  else logger.info({ provider: pc.name, model: pc.model, keys: a.total }, `${pc.label} provider keys loaded`);
 
   const app = createApp();
   const server = app.listen(e.PORT, () => logger.info({ port: e.PORT, url: e.APP_URL }, `${e.APP_NAME} listening`));

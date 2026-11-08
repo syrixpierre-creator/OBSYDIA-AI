@@ -19,6 +19,7 @@ publicRouter.get("/config", async (_req, res) => {
     app: { name: e.APP_NAME, creator: e.APP_CREATOR, email: e.APP_EMAIL, url: e.APP_URL },
     ai: {
       displayName: ai.displayName,
+      provider: ai.provider,
       welcomeMessage: ai.welcomeMessage,
       welcomeMessageFr: ai.welcomeMessageFr,
       welcomeSubtitle: ai.welcomeSubtitle,

@@ -22,8 +22,8 @@ beforeAll(async () => {
   if (!uri) return;
   mock = await startMockProvider();
   process.env.MONGODB_URI = uri;
-  process.env.XKIRO_BASE_URL = mock.url;
-  process.env.XKIRO_API_KEYS = '["TESTKEY1","TESTKEY2"]';
+  process.env.AI_BASE_URL = mock.url;
+  process.env.AI_API_KEYS = '["TESTKEY1","TESTKEY2"]';
   process.env.STRIPE_SECRET_KEY = "sk_test_dummy";
   process.env.STRIPE_WEBHOOK_SECRET = "whsec_test_secret";
   process.env.ADMIN_EMAIL = "admin@obsydia.test";
@@ -335,7 +335,7 @@ d("developer API", () => {
     expect(String(stream.body)).toContain("data: [DONE]");
 
     const models_ = await request(app).get("/api/v1/models").set("authorization", `Bearer ${secret}`);
-    expect(models_.body.data[0].id).toBe("qwen/qwen3.8-omni-flash:free");
+    expect(models_.body.data[0].id).toBe("deepseek-v4-flash");
     const usage = await request(app).get("/api/v1/usage").set("authorization", `Bearer ${secret}`);
     expect(usage.body.plan).toBe("pro");
     expect(usage.body.tokens.total).toBe(60000);
@@ -520,7 +520,8 @@ d("admin AI prompt", () => {
     const { client } = await signup(app, "longprompt@example.com");
     const conv = (await client.post("/api/chat/conversations", {})).body.conversation;
     await send(client, conv.id, "hello");
-    expect(mock.requests.at(-1)!.body.messages[0].content.startsWith(prompt.trim())).toBe(true);
+    const sent = mock.requests.at(-1)!.body.messages[0].content as string;
+    expect(sent.startsWith(prompt.trim())).toBe(true);
     const bal = (await client.get("/api/tokens")).body.balance;
     expect(bal.used).toBeLessThan(2000);
   });

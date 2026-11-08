@@ -64,7 +64,28 @@ const schema = z.object({
   AI_PROJECT_MAX_OUTPUT_TOKENS: int(16000),
   AI_CONTEXT_MESSAGES: int(24),
 
-  AI_PROVIDER: z.string().default("xkiro"),
+  AI_PROVIDER: z.string().trim().toLowerCase().default("deepseek"),
+  AI_BASE_URL: z.string().optional().default("").refine((v) => v === "" || /^https?:\/\//.test(v), "must be a URL"),
+  AI_MODEL: z.string().optional().default(""),
+  AI_MODELS: z.string().optional().default(""),
+  AI_API_KEYS: jsonArray.default("[]"),
+  AI_TIMEOUT_MS: z.string().optional().default(""),
+  AI_MAX_RETRIES: z.string().optional().default(""),
+  AI_SUPPORTS_VISION: z.string().optional().default(""),
+  AI_SUPPORTS_AUDIO: z.string().optional().default(""),
+  AI_SUPPORTS_TOOLS: z.string().optional().default(""),
+  AI_EXTRA_BODY: z.string().optional().default("").transform((v, ctx) => {
+    if (!v.trim()) return null;
+    try {
+      const parsed = JSON.parse(v);
+      if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) throw new Error();
+      return parsed as Record<string, unknown>;
+    } catch {
+      ctx.addIssue({ code: z.ZodIssueCode.custom, message: "must be a JSON object" });
+      return z.NEVER;
+    }
+  }),
+  AI_MAX_OUTPUT_CAP: int(0),
   XKIRO_BASE_URL: z.string().url().default("https://api.xkiro.com/v1"),
   XKIRO_MODEL: z.string().default("qwen/qwen3.8-omni-flash:free"),
   XKIRO_MODELS: z.string().optional().default(""),

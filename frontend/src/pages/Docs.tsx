@@ -345,7 +345,7 @@ curl ${base}/chat \\
   "data": [{
     "id": "${model}",
     "object": "model",
-    "owned_by": "xkiro",
+    "owned_by": "${config?.ai.provider || "deepseek"}",
     "default": true,
     "capabilities": { "streaming": true, "vision": false, "audio": false, "tools": false }
   }]

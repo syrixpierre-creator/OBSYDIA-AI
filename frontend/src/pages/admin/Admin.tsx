@@ -328,7 +328,7 @@ function Keys() {
           </tbody>
         </table>
       </div>
-      <Modal open={adding} onClose={() => setAdding(false)} title="Add XKIRO API key" footer={<><button className="btn ghost" onClick={() => setAdding(false)}>{t("common.cancel")}</button><button className="btn primary" disabled={!form.label || form.key.length < 10} onClick={add}>Save & test</button></>}>
+      <Modal open={adding} onClose={() => setAdding(false)} title="Add provider API key" footer={<><button className="btn ghost" onClick={() => setAdding(false)}>{t("common.cancel")}</button><button className="btn primary" disabled={!form.label || form.key.length < 10} onClick={add}>Save & test</button></>}>
         <div className="stack">
           <label className="field"><span>Label</span><input className="input" value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="Friend — Alex" /></label>
           <label className="field"><span>Owner ({t("common.optional")})</span><input className="input" value={form.owner} onChange={(e) => setForm({ ...form, owner: e.target.value })} /></label>

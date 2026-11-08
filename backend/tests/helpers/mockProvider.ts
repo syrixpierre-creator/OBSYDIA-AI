@@ -14,6 +14,7 @@ export interface MockProvider {
   requests: { key: string; body: any }[];
   behaviors: Map<string, KeyBehavior>;
   rejectStreamOptions: boolean;
+  rejectThinking: boolean;
   reply: (body: any) => string;
   close: () => Promise<void>;
 }
@@ -63,13 +64,15 @@ export async function startMockProvider(): Promise<MockProvider> {
     requests: [],
     behaviors: new Map(),
     rejectStreamOptions: false,
+    rejectThinking: false,
     reply: defaultReply,
     close: async () => undefined
   };
   const server = http.createServer((req, res) => {
-    let raw = "";
-    req.on("data", (c) => (raw += c));
+    const chunks: Buffer[] = [];
+    req.on("data", (c: Buffer) => chunks.push(c));
     req.on("end", () => {
+      const raw = Buffer.concat(chunks).toString("utf8");
       const key = String(req.headers.authorization || "").replace(/^Bearer\s+/, "");
       const body = raw ? JSON.parse(raw) : {};
       state.requests.push({ key, body });
@@ -88,6 +91,7 @@ export async function startMockProvider(): Promise<MockProvider> {
       if (behavior.type === "unauthorized") return json(401, { error: { message: "Invalid API key" } });
       if (behavior.type === "server_error") return json(500, { error: { message: "Upstream failure" } });
       if (behavior.type === "bad_request") return json(400, { error: { message: behavior.message || "bad request" } });
+      if (body.thinking && state.rejectThinking) return json(400, { error: { message: "Unknown parameter: thinking" } });
       if (body.stream && body.stream_options && state.rejectStreamOptions) return json(400, { error: { message: "Unknown parameter: stream_options" } });
       const content = state.reply(body);
       const usage = { prompt_tokens: 50, completion_tokens: Math.ceil(content.length / 4), total_tokens: 50 + Math.ceil(content.length / 4) };

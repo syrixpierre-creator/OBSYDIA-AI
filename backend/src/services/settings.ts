@@ -1,4 +1,5 @@
 import { env } from "../config/env.js";
+import { providerConfig } from "../config/provider.js";
 import { AdminSetting } from "../models/index.js";
 import { applyOverrides, basePlans, type PlanDefinition, type PlanId, type PlanOverrides } from "../config/plans.js";
 
@@ -20,7 +21,7 @@ export interface AiSettings {
 
 export function envAiSettings(): AiSettings {
   const e = env();
-  const extra = e.XKIRO_MODELS.split(",").map((m) => m.trim()).filter(Boolean);
+  const pc = providerConfig();
   return {
     displayName: e.AI_DISPLAY_NAME,
     personality: e.AI_PERSONALITY,
@@ -43,10 +44,10 @@ export function envAiSettings(): AiSettings {
       ]
     },
     defaultLanguage: e.AI_DEFAULT_LANGUAGE,
-    provider: e.AI_PROVIDER,
-    model: e.XKIRO_MODEL,
-    models: Array.from(new Set([e.XKIRO_MODEL, ...extra])),
-    capabilities: { vision: e.XKIRO_SUPPORTS_VISION, audio: e.XKIRO_SUPPORTS_AUDIO, tools: e.XKIRO_SUPPORTS_TOOLS },
+    provider: pc.name,
+    model: pc.model,
+    models: pc.models,
+    capabilities: { ...pc.capabilities },
     maxOutputTokens: e.AI_MAX_OUTPUT_TOKENS
   };
 }
@@ -74,7 +75,16 @@ export function clearSettingsCache() {
 
 export async function getAiSettings(): Promise<AiSettings> {
   const base = envAiSettings();
-  const overrides = (await readSetting<Partial<AiSettings>>("ai")) || {};
+  const raw = (await readSetting<Partial<AiSettings> & { modelsProvider?: string }>("ai")) || {};
+  const overrides: Record<string, unknown> = { ...raw };
+  delete overrides.provider;
+  delete overrides.modelsProvider;
+  if (raw.modelsProvider !== base.provider) {
+    delete overrides.model;
+    delete overrides.models;
+    delete overrides.capabilities;
+    delete overrides.maxOutputTokens;
+  }
   const merged: AiSettings = { ...base };
   for (const [k, v] of Object.entries(overrides)) {
     if (v === undefined || v === null || v === "") continue;

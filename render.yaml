@@ -44,12 +44,12 @@ services:
       - key: AI_DISPLAY_NAME
         value: OBSYDIA
       - key: AI_PROVIDER
-        value: xkiro
-      - key: XKIRO_BASE_URL
-        value: https://api.xkiro.com/v1
-      - key: XKIRO_MODEL
-        value: qwen/qwen3.8-omni-flash:free
-      - key: XKIRO_API_KEYS
+        value: deepseek
+      - key: AI_BASE_URL
+        value: https://api.deepseek.com
+      - key: AI_MODEL
+        value: deepseek-v4-flash
+      - key: AI_API_KEYS
         sync: false
       - key: SMTP_HOST
         sync: false

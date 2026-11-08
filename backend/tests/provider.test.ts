@@ -9,7 +9,7 @@ let mock: MockProvider;
 beforeAll(async () => {
   mongoose.set("bufferCommands", false);
   mock = await startMockProvider();
-  process.env.XKIRO_BASE_URL = mock.url;
+  process.env.AI_BASE_URL = mock.url;
 });
 
 afterAll(async () => {
@@ -18,7 +18,7 @@ afterAll(async () => {
 });
 
 function manager(keys: string[]) {
-  process.env.XKIRO_API_KEYS = JSON.stringify(keys);
+  process.env.AI_API_KEYS = JSON.stringify(keys);
   resetEnvCache();
   return new ProviderManager();
 }
@@ -27,9 +27,10 @@ beforeEach(() => {
   mock.requests.length = 0;
   mock.behaviors.clear();
   mock.rejectStreamOptions = false;
+  mock.rejectThinking = false;
 });
 
-describe("XKIRO provider manager", () => {
+describe("AI provider manager", () => {
   it("rotates keys round-robin", async () => {
     const pm = manager(["K1", "K2", "K3"]);
     for (let i = 0; i < 6; i++) await pm.chat({ messages: [{ role: "user", content: "hi" }] });
@@ -79,7 +80,7 @@ describe("XKIRO provider manager", () => {
 
   it("does not retry client errors", async () => {
     const pm = manager(["A", "B"]);
-    mock.behaviors.set("A", { type: "bad_request", message: "unsupported parameter" });
+    mock.behaviors.set("A", { type: "bad_request", message: "invalid value for temperature" });
     await expect(pm.chat({ messages: [{ role: "user", content: "x" }] })).rejects.toMatchObject({ code: "provider_rejected_request" });
     expect(mock.requests).toHaveLength(1);
   });
@@ -102,12 +103,12 @@ describe("XKIRO provider manager", () => {
   });
 
   it("times out hanging keys", async () => {
-    process.env.XKIRO_TIMEOUT_MS = "300";
+    process.env.AI_TIMEOUT_MS = "300";
     const pm = manager(["H", "OK"]);
     mock.behaviors.set("H", { type: "hang" });
     const r = await pm.chat({ messages: [{ role: "user", content: "x" }] });
     expect(r.content).toBe("Echo: x");
-    process.env.XKIRO_TIMEOUT_MS = "5000";
+    process.env.AI_TIMEOUT_MS = "5000";
     resetEnvCache();
   });
 
@@ -120,6 +121,17 @@ describe("XKIRO provider manager", () => {
     const bad = await pm.testKey(b!.fingerprint);
     expect(bad.ok).toBe(false);
     expect(bad.kind).toBe("auth");
+  });
+
+  it("disables DeepSeek thinking by default and adapts if the parameter is refused", async () => {
+    const pm = manager(["A"]);
+    await pm.chat({ messages: [{ role: "user", content: "x" }] });
+    expect(mock.requests.at(-1)!.body.thinking).toEqual({ type: "disabled" });
+    mock.rejectThinking = true;
+    const r = await pm.chat({ messages: [{ role: "user", content: "y" }], onDelta: () => undefined });
+    expect(r.content).toBe("Echo: y");
+    expect(mock.requests.at(-1)!.body.thinking).toBeUndefined();
+    mock.rejectThinking = false;
   });
 
   it("parses Retry-After formats", () => {

@@ -5,5 +5,5 @@ process.env.SESSION_SECRET = "test-sess-0123456789abcdef0123456789abcdef";
 process.env.ENCRYPTION_KEY = "test-encr-0123456789abcdef0123456789abcdef";
 process.env.APP_URL = "http://localhost:8080";
 process.env.DATA_DIR = `${process.env.TMPDIR || "/tmp"}/obsydia-test-data-${process.pid}`;
-process.env.XKIRO_MAX_RETRIES = "3";
-process.env.XKIRO_TIMEOUT_MS = "5000";
+process.env.AI_MAX_RETRIES = "3";
+process.env.AI_TIMEOUT_MS = "5000";

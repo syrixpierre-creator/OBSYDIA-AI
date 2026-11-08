@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import OpenAI, { toFile } from "openai";
 import { env } from "../config/env.js";
+import { providerConfig } from "../config/provider.js";
 import { AppError, unavailable } from "../lib/errors.js";
 import { providerManager } from "./ai/providerManager.js";
 import { getAiSettings } from "./settings.js";
@@ -24,7 +25,7 @@ export async function transcribe(filePath: string, filename: string, mime: strin
     await providerManager.refresh();
     const key = providerManager.pick();
     if (!key) throw unavailable("provider_unavailable", "No provider key is available");
-    client = new OpenAI({ apiKey: key.secret, baseURL: e.XKIRO_BASE_URL, timeout: 120_000, maxRetries: 1 });
+    client = new OpenAI({ apiKey: key.secret, baseURL: providerConfig().baseURL, timeout: 120_000, maxRetries: 1 });
     model = settings.model;
   }
   try {
