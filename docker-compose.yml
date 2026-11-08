@@ -51,6 +51,8 @@ services:
       RUN_MIGRATIONS: "false"
       DATABASE_URL: postgresql://${POSTGRES_USER:-inconnu}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-inconnu_sms}?schema=public
     command: ["node", "node_modules/tsx/dist/cli.mjs", "scripts/worker.ts"]
+    healthcheck:
+      disable: true
     depends_on:
       app:
         condition: service_healthy
