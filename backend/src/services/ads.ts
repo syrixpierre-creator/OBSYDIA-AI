@@ -10,6 +10,9 @@ export interface AdsSettings {
   smartlink: string;
   socialDelaySeconds: number;
   adFreePlans: string[];
+  communityUrl: string;
+  communityPrompt: boolean;
+  communityDelaySeconds: number;
 }
 
 export function envAds(): AdsSettings {
@@ -21,7 +24,10 @@ export function envAds(): AdsSettings {
     socialSrc: e.ADS_SOCIAL_SRC,
     smartlink: e.ADS_SMARTLINK,
     socialDelaySeconds: e.ADS_SOCIAL_DELAY_SECONDS,
-    adFreePlans: e.ADS_FREE_PLANS.split(",").map((s) => s.trim()).filter(Boolean)
+    adFreePlans: e.ADS_FREE_PLANS.split(",").map((s) => s.trim()).filter(Boolean),
+    communityUrl: e.COMMUNITY_WHATSAPP_URL,
+    communityPrompt: e.COMMUNITY_PROMPT_ENABLED,
+    communityDelaySeconds: e.COMMUNITY_PROMPT_DELAY_SECONDS
   };
 }
 

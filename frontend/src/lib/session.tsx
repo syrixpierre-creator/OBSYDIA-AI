@@ -46,6 +46,7 @@ export interface PublicConfig {
   referral: { required: number; rewardTokens: number };
   plans: PlanInfo[];
   limits: { maxUploadMb: number };
+  community?: { whatsappUrl: string | null; prompt: boolean; delaySeconds: number };
   ads?: {
     enabled: boolean;
     nativeSrc: string | null;

@@ -381,7 +381,10 @@ function AdsAdmin() {
         socialSrc: f.socialSrc || "",
         smartlink: f.smartlink || "",
         socialDelaySeconds: Number(f.socialDelaySeconds) || 0,
-        adFreePlans: f.adFreePlans
+        adFreePlans: f.adFreePlans,
+        communityUrl: f.communityUrl || "",
+        communityPrompt: Boolean(f.communityPrompt),
+        communityDelaySeconds: Number(f.communityDelaySeconds) || 0
       });
       toast(t("common.saved"));
       setNativeCode("");
@@ -427,6 +430,14 @@ function AdsAdmin() {
           ))}
         </div>
         <small className="dim">Administrators never see ads.</small>
+      </div>
+      <div className="card card-pad stack">
+        <span className="label">Community — WhatsApp channel</span>
+        <label className="check"><input type="checkbox" checked={Boolean(f.communityPrompt)} onChange={(e) => setF({ ...f, communityPrompt: e.target.checked })} /> Suggest following the channel to new visitors (shown once, snooze 3 days)</label>
+        <div className="grid cols-2">
+          <label className="field"><span>Channel URL</span><input className="input mono" value={f.communityUrl || ""} onChange={(e) => setF({ ...f, communityUrl: e.target.value })} /></label>
+          <label className="field"><span>Delay before showing (seconds)</span><input className="input" type="number" min={0} max={600} value={f.communityDelaySeconds ?? 6} onChange={(e) => setF({ ...f, communityDelaySeconds: e.target.value })} /></label>
+        </div>
       </div>
       <div className="row">
         <button className="btn primary" onClick={save}>{t("common.save")}</button>

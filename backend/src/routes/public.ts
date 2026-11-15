@@ -54,6 +54,11 @@ publicRouter.get("/config", async (_req, res) => {
       smartlink: ads.smartlink || null,
       socialDelaySeconds: ads.socialDelaySeconds,
       adFreePlans: ads.adFreePlans
+    },
+    community: {
+      whatsappUrl: ads.communityUrl || null,
+      prompt: Boolean(ads.communityPrompt && ads.communityUrl),
+      delaySeconds: ads.communityDelaySeconds
     }
   });
 });

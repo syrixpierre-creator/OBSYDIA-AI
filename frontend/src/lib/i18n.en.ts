@@ -295,6 +295,11 @@ export const en = {
   "pricing.promoNote": "Promo codes apply to eligible plans only.",
 
   "billing.title": "Plan & usage",
+  "community.title": "Follow Inconnu Boy Sensei",
+  "community.body": "Join the official WhatsApp channel for OBSYDIA updates, new features and tips — first.",
+  "community.follow": "Follow the channel",
+  "community.later": "Later",
+  "community.footer": "WhatsApp channel",
   "ads.sponsored": "Sponsored",
   "ads.remove": "Remove ads with Premium",
   "ads.partner": "Partner offers",

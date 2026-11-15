@@ -9,6 +9,7 @@ import { AppShell } from "./components/AppShell";
 import { ChatPage } from "./pages/app/Chat";
 import { InviteAccept } from "./pages/Invite";
 import { SocialBar } from "./components/Ads";
+import { CommunityPrompt } from "./components/Community";
 
 const Docs = lazy(() => import("./pages/Docs").then((m) => ({ default: m.Docs })));
 const Projects = lazy(() => import("./pages/app/Projects").then((m) => ({ default: m.Projects })));
@@ -45,6 +46,7 @@ export function App() {
   return (
     <Suspense fallback={<Spinner />}>
       <SocialBar />
+      <CommunityPrompt />
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/pricing" element={<PricingPublic />} />

@@ -297,6 +297,11 @@ export const fr: Dict = {
   "pricing.promoNote": "Les codes promo s'appliquent uniquement aux offres éligibles.",
 
   "billing.title": "Offre et consommation",
+  "community.title": "Suivez Inconnu Boy Sensei",
+  "community.body": "Rejoignez la chaîne WhatsApp officielle pour recevoir en premier les nouveautés, fonctionnalités et astuces OBSYDIA.",
+  "community.follow": "Suivre la chaîne",
+  "community.later": "Plus tard",
+  "community.footer": "Chaîne WhatsApp",
   "ads.sponsored": "Sponsorisé",
   "ads.remove": "Retirer les pubs avec Premium",
   "ads.partner": "Offres partenaires",

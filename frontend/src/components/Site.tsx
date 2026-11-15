@@ -5,6 +5,7 @@ import { Logo } from "./Logo";
 import { LanguageSwitch } from "./LanguageSwitch";
 import { useI18n } from "../lib/i18n";
 import { useSession } from "../lib/session";
+import { WhatsAppIcon } from "./Community";
 
 export function SiteNav() {
   const { t } = useI18n();
@@ -66,6 +67,11 @@ export function SiteFooter() {
           <div>
             <h5>Contact</h5>
             <a href={`mailto:${email}`}>{email}</a>
+            {config?.community?.whatsappUrl && (
+              <a href={config.community.whatsappUrl} target="_blank" rel="noopener noreferrer" style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
+                <WhatsAppIcon size={14} /> {t("community.footer")}
+              </a>
+            )}
             <span className="row" style={{ marginTop: 8 }}><LanguageSwitch compact /></span>
           </div>
         </div>

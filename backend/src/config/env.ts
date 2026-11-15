@@ -159,6 +159,10 @@ const schema = z.object({
   ADS_SOCIAL_DELAY_SECONDS: int(20),
   ADS_FREE_PLANS: z.string().optional().default("premium,custom"),
 
+  COMMUNITY_WHATSAPP_URL: z.string().optional().default("https://whatsapp.com/channel/0029VbC6It7K0IBkQwaKYd2J"),
+  COMMUNITY_PROMPT_ENABLED: z.string().optional().transform((v) => v === undefined || v === "" ? true : ["true", "1", "yes"].includes(v.toLowerCase())),
+  COMMUNITY_PROMPT_DELAY_SECONDS: int(6),
+
   ADMIN_EMAIL: z.string().optional().default(""),
   ADMIN_PASSWORD: z.string().optional().default("")
 });

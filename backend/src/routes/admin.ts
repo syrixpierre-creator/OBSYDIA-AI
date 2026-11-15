@@ -192,7 +192,10 @@ adminRouter.put("/ads", async (req, res) => {
       socialSrc: httpsUrl,
       smartlink: httpsUrl,
       socialDelaySeconds: z.number().int().min(0).max(600),
-      adFreePlans: z.array(z.enum(["free", "pro", "premium", "custom"])).max(4)
+      adFreePlans: z.array(z.enum(["free", "pro", "premium", "custom"])).max(4),
+      communityUrl: httpsUrl.optional(),
+      communityPrompt: z.boolean().optional(),
+      communityDelaySeconds: z.number().int().min(0).max(600).optional()
     })
   );
   await writeSetting("ads", input, req.user._id);
